@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".fragment.FragmentHome">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/reddish"
+        android:orientation="vertical"  >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="10dp"
+            android:text="What do you like to order ?"
+            android:fontFamily="@font/georgia_regular"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.03"
+            android:textColor="@color/white" />
+
+        <EditText
+            android:id="@+id/search_field"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/search_layout"
+            android:backgroundTint="@color/white"
+            android:drawableEnd="@drawable/ic_baseline_search_24"
+            android:ems="10"
+            android:hint="Search here"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:paddingStart="20dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="10dp"
+            android:textColor="#999999"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/WelcomeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/georgia_regular"
+            android:letterSpacing="0.02"
+            android:text="Categories"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="450dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingEnd="5dp"
+                android:paddingBottom="5dp">
+
+                <Button
+                    android:id="@+id/AllProducts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/custom_button"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:minHeight="0dp"
+                    android:text="All"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"/>
+
+                <Button
+                    android:id="@+id/MostPopular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/custom_button"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:minHeight="0dp"
+                    android:text="Most popular"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"/>
+
+
+                <Button
+                    android:id="@+id/Men"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/custom_button"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:minHeight="0dp"
+                    android:text="Men"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"/>
+
+                <Button
+                    android:id="@+id/Women"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/custom_button"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:minHeight="0dp"
+                    android:text="Women"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"/>
+
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/HomeRecyclerList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

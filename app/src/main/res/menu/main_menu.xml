@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_productslist"
+            android:title="Products list"
+            android:icon="@drawable/ic_baseline_format_list_bulleted_24"/>
+        <item
+            android:id="@+id/nav_sales"
+            android:title="Sales report"
+            android:icon="@drawable/ic_sales"/>
+        <item
+            android:id="@+id/nav_password"
+            android:title="Change password"
+            android:icon="@drawable/ic_padlock"/>
+        <item
+            android:id="@+id/nav_refund"
+            android:title="Return/Refund"
+            android:icon="@drawable/ic_returning"/>
+
+    </group>
+
+    <item android:title="">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_signout"
+                    android:title="Sign out"
+                    android:icon="@drawable/ic_logout"/>
+            </group>
+        </menu>
+    </item>
+</menu>

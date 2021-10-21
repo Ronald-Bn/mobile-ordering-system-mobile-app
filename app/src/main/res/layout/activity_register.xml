@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/reddish"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".RegisterActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:fontFamily="@font/script_mt"
+        android:textColor="@color/white"
+        android:text="Register Form" />
+
+    <EditText
+        android:id="@+id/EditTextFullName"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:autofillHints="full_name"
+        android:hint="@string/full_name"
+        android:textSize="14sp"
+        android:textColorHint="@xml/selector"
+        android:textColor="@color/white"
+        android:inputType="textPersonName"
+        android:backgroundTint="@color/white"
+        />
+
+    <EditText
+        android:id="@+id/EditTextPhoneNumber"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/phone_number1"
+        android:textSize="14sp"
+        android:inputType="phone"
+        android:textColorHint="@xml/selector"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/white"
+        android:autofillHints="@string/phone_number" />
+
+    <EditText
+        android:id="@+id/EditTextRegisterEmail"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:autofillHints="@string/email"
+        android:hint="@string/email"
+        android:textSize="14sp"
+        android:inputType="textWebEmailAddress"
+        android:textColorHint="@xml/selector"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/white"
+        />
+
+    <EditText
+        android:id="@+id/EditTextPassword"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/password"
+        android:textSize="14sp"
+        android:inputType="textPassword"
+        android:textColorHint="@xml/selector"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/white"
+        android:autofillHints="@string/password" />
+
+    <EditText
+        android:id="@+id/EditTextConfirmPassword"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/confirm_password"
+        android:textSize="14sp"
+        android:textColorHint="@xml/selector"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/white"
+        android:autofillHints="confirm_password"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/EditTextAddress"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/address"
+        android:textColorHint="@xml/selector"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/white"
+        android:textSize="14sp"
+        android:autofillHints="address"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/EditTextZipCode"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/zipcode"
+        android:textColorHint="@xml/selector"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/white"
+        android:textSize="14sp"
+        android:inputType="number"
+        android:autofillHints="zipcode" />
+
+            <LinearLayout
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <CheckBox
+                    android:id="@+id/checkBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/white"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/checkbox"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:onClick="termsAndCondition"/>
+
+            </LinearLayout>
+
+    <Button
+        android:id="@+id/Btn_Register"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/custom_button"
+        android:text="@string/register"
+        android:textAllCaps="false"
+        android:textColor="@color/black" />
+
+</LinearLayout>

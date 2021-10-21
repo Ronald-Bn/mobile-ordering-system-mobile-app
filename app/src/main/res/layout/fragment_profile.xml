@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".fragment.FragmentProfile">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <Button
+        android:id="@+id/changeProfileDilaogBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/custom_button_cart"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/white"
+        android:text="Change Profile"
+        android:textSize="14sp"
+        />
+
+    <Button
+        android:id="@+id/changePasswordDialaogBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/custom_button_cart"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/white"
+        android:text="Change password"
+        android:textSize="14sp"
+        />
+
+    <Button
+        android:id="@+id/BtnSignOut"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/custom_button_cart"
+        android:backgroundTint="@color/reddish"
+        android:text="Sign out" />
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:layout_marginTop="20dp"
+        android:text="@string/termsAndCondition"
+        android:textColor="@color/black"
+        android:textSize="12sp" />
+
+</LinearLayout>

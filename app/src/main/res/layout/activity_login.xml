@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center"
+    android:background="@color/reddish"
+    tools:context=".LoginActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:fontFamily="@font/script_mt"
+        android:textColor="@color/white"
+        android:text="@string/welcome_to_chasy_products" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:hint="@string/email"
+        android:textColorHint="@color/white"
+        app:boxStrokeColor="@color/white" >
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:ems="10"
+            android:textColorHint="@xml/selector"
+            android:inputType="textEmailAddress"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            tools:ignore="TextFields" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:hint="@string/password"
+        app:boxStrokeColor="@color/white"
+        android:textColorHint="@color/white">
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColorHint="@xml/selector"
+            android:ems="10"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:inputType="textPassword" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+            <LinearLayout
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="right">
+
+                <TextView
+                    android:id="@+id/ForgetPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/forget_password"
+                    android:textSize="14sp"
+                    android:textColor="@color/white"
+                    android:textAlignment="textEnd"
+                    tools:ignore="RtlCompat" />
+
+            </LinearLayout>
+
+    <Button
+        android:id="@+id/Btn_SignIn"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/custom_button"
+        android:text="@string/sign_in"
+        android:textColor="@color/black"
+        android:textAllCaps="false"
+        android:foreground="?attr/selectableItemBackgroundBorderless" />
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/don_t_have_an_account"
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        android:textAlignment="textStart"
+        android:layout_gravity="center"
+        tools:ignore="RtlCompat"
+        />
+
+    <Button
+        android:id="@+id/Btn_MainRegister"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/register"
+        android:textColor="@color/black"
+        android:background="@drawable/custom_button"
+        android:textAllCaps="false"
+        android:foreground="?attr/selectableItemBackgroundBorderless"/>
+
+</LinearLayout>
