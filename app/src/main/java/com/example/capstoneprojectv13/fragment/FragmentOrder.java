@@ -73,12 +73,8 @@ public class FragmentOrder extends Fragment {
         TabLayout tabLayout = view.findViewById(R.id.tabBar);
         ViewPager2 viewPager = view.findViewById(R.id.viewPager);
 
-
-
         viewPagerFragmentAdapter = new ViewPagerFragmentAdapter(FragmentOrder.this);
-
         viewPager.setAdapter(viewPagerFragmentAdapter);
-
             new TabLayoutMediator(tabLayout, viewPager,(tab,position) -> tab.setText(titles[position])).attach();
 
         return view;

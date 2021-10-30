@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.example.capstoneprojectv13.adapter.MainProductsAdapter;
 import com.example.capstoneprojectv13.fragment.FragmentCart;
@@ -61,12 +62,12 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new FragmentCart();
                         break;
 
-                    case R.id.payment_nav:
-                        fragment = new FragmentPayment();
-                        break;
-
                     case R.id.order_nav:
                         fragment = new FragmentOrder();
+                        break;
+
+                    case R.id.notification_nav:
+                        fragment = new FragmentCart();
                         break;
 
                     case R.id.profile_nav:

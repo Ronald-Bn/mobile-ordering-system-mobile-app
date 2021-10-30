@@ -74,12 +74,8 @@ public class FragmentPayment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_payment, container, false);
         recyclerView = view.findViewById(R.id.OrdersPendingList);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-
         FirebaseRecyclerOptions<OrdersModel> options =
                 new FirebaseRecyclerOptions.Builder<OrdersModel>()
                         .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference().child("Orders")

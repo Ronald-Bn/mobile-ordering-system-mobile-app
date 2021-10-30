@@ -42,12 +42,13 @@ public class OrdersAdapter extends FirebaseRecyclerAdapter<OrdersModel, OrdersAd
     @Override
     protected void onBindViewHolder(@NonNull myViewHolder holder, int position, @NonNull OrdersModel model) {
 
-        holder.OrdersNameTv.setText(model.getName());
+        holder.OrdersNameTv.setText(model.getCartId());
         holder.OrdersDateTv.setText(model.getDate());
         holder.OrdersAddressTv.setText(model.getAddress());
         holder.OrdersZipcodeTv.setText(model.getZipcode());
         if (activate) {
             holder.OrdersBtn.setText(name);
+            holder.OrdersBtn.setEnabled(false);
             holder.OrdersBtn.setVisibility(View.VISIBLE);
         } else {
             holder.OrdersBtn.setVisibility(View.GONE);

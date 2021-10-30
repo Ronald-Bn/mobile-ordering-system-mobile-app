@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.capstoneprojectv13.R;
 import com.example.capstoneprojectv13.adapter.OrdersAdapter;
+import com.example.capstoneprojectv13.adapter.OrdersPendingAdapter;
 import com.example.capstoneprojectv13.model.OrdersModel;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,7 +35,7 @@ public class FragmentOrderPending extends Fragment {
 
     // TODO: Rename and change types of parameters
     private RecyclerView recyclerView;
-    private OrdersAdapter ordersAdapter;
+    private OrdersPendingAdapter ordersPendingAdapter;
     private FirebaseAuth mAuth;
     private Parcelable state;
 
@@ -88,9 +89,8 @@ public class FragmentOrderPending extends Fragment {
                                 .child("Orders").orderByChild("status").equalTo("pending"), OrdersModel.class)
                         .build();
 
-        ordersAdapter = new OrdersAdapter(view.getContext(),options);
-        ordersAdapter.activateButtons(true, "Pending");
-        recyclerView.setAdapter(ordersAdapter);
+        ordersPendingAdapter = new OrdersPendingAdapter(view.getContext(),options);
+        recyclerView.setAdapter(ordersPendingAdapter);
         return view;
     }
 
@@ -109,6 +109,6 @@ public class FragmentOrderPending extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        ordersAdapter.startListening();
+        ordersPendingAdapter.startListening();
     }
 }

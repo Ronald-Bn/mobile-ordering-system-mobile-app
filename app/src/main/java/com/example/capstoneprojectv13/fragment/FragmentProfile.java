@@ -39,7 +39,7 @@ public class FragmentProfile extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private Button btnSignOut, btnChangePassword;
+    private Button btnSignOut, btnChangePassword, btnChangeProfile;
     private FirebaseAuth mAuth;
 
     public FragmentProfile() {
@@ -81,6 +81,7 @@ public class FragmentProfile extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         btnSignOut = view.findViewById(R.id.BtnSignOut);
+        btnChangeProfile = view.findViewById(R.id.changeProfileDilaogBtn);
         btnChangePassword = view.findViewById(R.id.changePasswordDialaogBtn);
         btnSignOut.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
@@ -90,13 +91,30 @@ public class FragmentProfile extends Fragment {
         btnChangePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowChangePasswordDialog();
+                showPasswordDialog();
+            }
+        });
+
+        btnChangeProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProfileDialog();
             }
         });
         return view;
     }
 
-    private void ShowChangePasswordDialog(){
+    private void showProfileDialog() {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.change_profile_dialog, null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder((getActivity()));
+        builder.setView(view);
+
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void showPasswordDialog(){
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.change_password_dialog, null);
         EditText passwordEt = view.findViewById(R.id.passwordEt);

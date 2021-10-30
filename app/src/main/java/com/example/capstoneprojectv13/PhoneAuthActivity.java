@@ -35,21 +35,16 @@ import java.util.concurrent.TimeUnit;
 public class PhoneAuthActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-
     private FirebaseFirestore fStore;
-    final String TAG = "PhoneAuthActivity";
-    // variable for our text input
-    // field for phone and OTP.
+
     private EditText edtPhone, edtOTP;
-    // buttons for generating OTP and verifying OTP
     private Button verifyOTPBtn, generateOTPBtn;
     private LinearLayout layout1, layout2;
-    // string for storing our verification ID
     private String verificationId;
     private ProgressBar progressBar;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private TextView resendPhoneAuth;
-
+    private final String TAG = "PhoneAuthActivity";
     private String userid, fullname, phone, email, password, address, zipcode;
 
     @Override

@@ -11,5 +11,17 @@
     <color name="yellow">#FEBA1F</color>
     <color name="grey">#535353</color>
     <color name="light">#f4f4f4</color>
+    <color name="dark_light">#c8c8c8</color>
+    <color name="font_gray">#919191</color>
     <color name="mtrl_textinput_default_box_stroke_color">#fff</color>
+
+    <!--Bootstrap Color-->
+    <color name="success">#5cb85c</color>
+    <color name="primary">#0275d8</color>
+    <color name="info">#5bc0de</color>
+    <color name="warning">#f0ad4e</color>
+    <color name="danger">#d9534f</color>
+    <color name="inverse">#292b2c</color>
+    <color name="faded">#f7f7f7</color>
+
 </resources>

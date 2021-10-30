@@ -206,8 +206,7 @@ public class ProductsActivity extends AppCompatActivity implements ICartLoadList
     }
 
     private void addToCart(){
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
+        FirebaseUser user = mAuth.getInstance().getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
                 .getReference("Cart")
                 .child(user.getUid());
@@ -299,9 +298,7 @@ public class ProductsActivity extends AppCompatActivity implements ICartLoadList
 
                 DatabaseReference ratings = databaseReference.push();
                 ratings.child("Name").setValue(Username);
-               /* ratings.child("Rating").setValue(Rating);*/
                 ratings.child("Review").setValue(Review);
-
                 dialog.cancel();
                 }
             }

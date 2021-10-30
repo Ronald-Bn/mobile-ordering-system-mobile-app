@@ -36,6 +36,7 @@ public class OrdersModel {
     public void setCartId(String cartId) {
         this.cartId = cartId;
     }
+
     public String getUid() {
         return uid;
     }

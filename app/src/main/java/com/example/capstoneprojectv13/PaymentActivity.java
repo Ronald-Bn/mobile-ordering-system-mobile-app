@@ -1,7 +1,6 @@
 package com.example.capstoneprojectv13;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,16 +9,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.capstoneprojectv13.adapter.CartAdapter;
-import com.example.capstoneprojectv13.listener.ICartLoadListener;
 import com.example.capstoneprojectv13.model.CartModel;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,27 +27,28 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
+import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
-public class PaymentActivity extends AppCompatActivity implements View.OnClickListener, ICartLoadListener {
+public class PaymentActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip;
+    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate;
     private Button btnPlaceOrder;
-    private String uid;
     private String ordersId;
     private int sum = 0;
     private FirebaseFirestore fStore;
@@ -57,26 +57,30 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     private RecyclerView recyclerView;
     private CartAdapter cartAdapter;
     private Parcelable state;
-    private RadioButton rBtnGcash;
-    ICartLoadListener cartLoadListener;
-
+    private RadioButton cashPaymentBtn, gCashPaymentBtn;
     private LinearLayout linearLayout,linearLayout2 ;
+    private EditText referenceNoEt, amountEt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_check_out);
+        setContentView(R.layout.activity_details_payment);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.action_bar_payment_options);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        cartLoadListener = this;
         TvAddress = findViewById(R.id.TvAddress);
         TvZipCode = findViewById(R.id.TvZipcode);
         TvSubtotal = findViewById(R.id.SubTotalTv);
         TvShip = findViewById(R.id.ShipPriceTv);
         TvTotalPayment = findViewById(R.id.TvTotalTv);
-        rBtnGcash = findViewById(R.id.radio_one);
-        btnPlaceOrder = (Button)findViewById(R.id.btnPlaceOrder);
+        cashPaymentBtn = findViewById(R.id.radio_one);
+        gCashPaymentBtn = findViewById(R.id.radio_two);
+        btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
+        OrderDateTv = findViewById(R.id.orderDateTv);
+        OrderIdTv = findViewById(R.id.orderIdTv);
+        amountEt = findViewById(R.id.amountEt);
+        confirmDate =findViewById(R.id.confirmDate);
+        referenceNoEt =findViewById(R.id.referenceNoEt);
         btnPlaceOrder.setOnClickListener(this);
 
         String cartId = getIntent().getStringExtra("cartId");
@@ -87,10 +91,8 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         linearLayout.setVisibility(View.VISIBLE);
         btnPlaceOrder.setText("Pay");
 
-        mAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-        uid = user.getUid();
+        FirebaseUser user = mAuth.getInstance().getCurrentUser();
 
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -105,7 +107,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         cartAdapter = new CartAdapter(this, options);
         recyclerView.setAdapter(cartAdapter);
 
-        DocumentReference documentReference = fStore.collection("Users").document(uid);
+        DocumentReference documentReference = fStore.collection("Users").document(user.getUid());
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -143,24 +145,57 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 Toast.makeText(PaymentActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference("Orders");
+        databaseReference.orderByChild("cartId").equalTo(cartId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren())
+                {
+                    Map<String,Object> map = (Map<String, Object>) ds.getValue();
+                    Object orderDate = map.get("date");
+                    Object orderId = map.get("cartId");
+                    Object confirmdate = map.get("confirmdate");
+                    String input =  String.valueOf(orderId);
+                    String orderID;
+                    if (input.length() > 12)
+                    {
+                        orderID = input.substring(0, 12);
+                    }
+                    else
+                    {
+                        orderID = input;
+                    }
+
+                    OrderDateTv.setText(String.valueOf(orderDate));
+                    OrderIdTv.setText(replaceAll(orderID));
+                    confirmDate.setText(String.valueOf(confirmdate));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(PaymentActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
     public void onClick(View view) {
-        if(view==btnPlaceOrder){
-            if(rBtnGcash.isChecked()){
+        if(view == btnPlaceOrder){
+            if(cashPaymentBtn.isChecked()){
                 cashPayment();
-            }else{
+            }else if(gCashPaymentBtn.isChecked()){
                 gCashPayment();
-                Toast.makeText(this, "Payment Clickeds", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(this, "Select payment method", Toast.LENGTH_SHORT).show();
             }
-
         }
     }
 
     private void cashPayment(){
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
         DatabaseReference rootRef = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
                 .child("Orders").child(ordersId);
 
@@ -173,6 +208,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
                     updateData.put("payment", "Cash on delivery");
                     updateData.put("status", "shipping");
+                    updateData.put("payment time", dateAndTime());
 
 
                             rootRef.updateChildren(updateData)
@@ -202,8 +238,49 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
     }
     private void gCashPayment(){
-        DatabaseReference rootRef = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
-                .child("Orders").child(ordersId);
+        if(TextUtils.isEmpty(amountEt.getText().toString())){
+            Toast.makeText(this, "Enter the amount", Toast.LENGTH_SHORT).show();
+        }else if(TextUtils.isEmpty(referenceNoEt.getText().toString())){
+            Toast.makeText(this, "Enter the reference number", Toast.LENGTH_SHORT).show();
+        }else{
+            DatabaseReference rootRef = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
+                    .child("Orders").child(ordersId);
+
+            rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()){
+                        Map<String,Object> updateData = new HashMap<>();
+                        updateData.put("payment","Gcash");
+                        updateData.put("status","shipping");
+                        updateData.put("refno", referenceNoEt.getText().toString().trim());
+                        updateData.put("amount", amountEt.getText().toString().trim());
+                        updateData.put("paymenttime", dateAndTime());
+
+                        rootRef.updateChildren(updateData)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Toast.makeText(PaymentActivity.this, "Add to Cart Successfully", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(PaymentActivity.this,MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(PaymentActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(PaymentActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     public void onRadioButtonClicked(View view) {
@@ -223,13 +300,15 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    @Override
-    public void onCartLoadSuccess(List<CartModel> cartModelList) {
-    }
+    private String dateAndTime(){
+        // Current Date and Time
+        Date dateAndTime = Calendar.getInstance().getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String currentDate = dateFormat.format(dateAndTime);
+        String currentTime = timeFormat.format(dateAndTime);
 
-    @Override
-    public void onCartLoadFailed(String message) {
-
+        return new StringBuilder().append(currentDate).append(" ").append(currentTime).toString();
     }
 
     @Override
@@ -248,5 +327,10 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     public void onPause() {
         super.onPause();
         state = recyclerView.getLayoutManager().onSaveInstanceState();
+    }
+
+
+    private static String replaceAll(String string){
+        return string.replaceAll("\\D+","");
     }
 }

@@ -6,15 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,11 +33,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
+
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,13 +44,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import static java.lang.String.format;
 
 public class CheckOutActivity extends AppCompatActivity {
 
     private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip;
     private Button btnPlaceOrder;
-    private String ongoing = "ongoing";
     private String subtotal;
     private String Address, Zipcode, userName;
     private FirebaseFirestore fStore;
@@ -66,6 +59,8 @@ public class CheckOutActivity extends AppCompatActivity {
     private Parcelable state;
     private UUID uuid = UUID.randomUUID();
     private String uuidAsString = uuid.toString();
+
+    private final long generateCartId = generateRandom(10);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,16 +79,14 @@ public class CheckOutActivity extends AppCompatActivity {
         btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
 
 
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
+
+        FirebaseUser user = mAuth.getInstance().getCurrentUser();
         fStore = FirebaseFirestore.getInstance();
 
         subtotal = getIntent().getStringExtra("subtotal");
 
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
         FirebaseRecyclerOptions<CartModel> options =
                 new FirebaseRecyclerOptions.Builder<CartModel>()
                         .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Cart")
@@ -156,16 +149,7 @@ public class CheckOutActivity extends AppCompatActivity {
 
 
     private void addToOrders () {
-
-        // Current Date and Time
-        Date dateAndTime = Calendar.getInstance().getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss", Locale.getDefault());
-        String currentDate = dateFormat.format(dateAndTime);
-        String currentTime = timeFormat.format(dateAndTime);
-
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
+        FirebaseUser user = mAuth.getInstance().getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
                 .getReference("Orders");
 
@@ -177,11 +161,11 @@ public class CheckOutActivity extends AppCompatActivity {
                 Map<String,Object> updateData = new HashMap<>();
                 updateData.put("userid", user.getUid());
                 updateData.put("key", snapshot.getRef().getKey());
-                updateData.put("cartId", uuidAsString);
+                updateData.put("cartId",String.valueOf(generateCartId));
                 updateData.put("name", userName);
                 updateData.put("address", TvAddress.getText().toString());
                 updateData.put("zipcode", TvZipCode.getText().toString());
-                updateData.put("date", currentDate + " " + currentTime);
+                updateData.put("date", dateAndTime());
                 updateData.put("status", "pending");
                 updateData.put("totalpayment", TvTotalPayment.getText().toString());
 
@@ -199,13 +183,9 @@ public class CheckOutActivity extends AppCompatActivity {
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                                         for(DataSnapshot childSnapshot: snapshot.getChildren()) {
-
-                                            //Check whether child with key 'isAvailable' exist or not
                                             if (childSnapshot.hasChild("key")) {
-
-                                                //Now update the status with false
                                                 databaseReference.child(childSnapshot.getKey()).child("key").setValue("pending");
-                                                databaseReference.child(childSnapshot.getKey()).child("cartId").setValue(uuidAsString);
+                                                databaseReference.child(childSnapshot.getKey()).child("cartId").setValue(String.valueOf(generateCartId));
                                             }
                                         }
                                     }
@@ -235,5 +215,28 @@ public class CheckOutActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    private String dateAndTime(){
+        // Current Date and Time
+        Date dateAndTime = Calendar.getInstance().getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String currentDate = dateFormat.format(dateAndTime);
+        String currentTime = timeFormat.format(dateAndTime);
+        return new StringBuilder().append(currentDate).append(" ").append(currentTime).toString();
+    }
+
+    public static long generateRandom(int length) {
+        Random random = new Random();
+        char[] digits = new char[length];
+        digits[0] = (char) (random.nextInt(9) + '1');
+        for (int i = 1; i < length; i++) {
+            digits[i] = (char) (random.nextInt(10) + '0');
+        }
+        return Long.parseLong(new String(digits));
+    }
+
+
 }
 
