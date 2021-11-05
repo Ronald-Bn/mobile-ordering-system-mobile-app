@@ -11,7 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CapstoneProjectv13">
-        <activity android:name=".ShippingActivity"></activity>
+        <activity android:name=".CancelledActivity"></activity>
+        <activity android:name=".CompletedActivity" />
+        <activity android:name=".ReceivingActivity" />
+        <activity android:name=".ShippingActivity" />
         <activity
             android:name=".PendingActivity"
             android:parentActivityName=".MainActivity" />

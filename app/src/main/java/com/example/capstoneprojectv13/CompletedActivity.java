@@ -1,21 +1,18 @@
 package com.example.capstoneprojectv13;
 
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.capstoneprojectv13.adapter.CartAdapter;
 import com.example.capstoneprojectv13.model.CartModel;
@@ -35,9 +32,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Map;
 
-public class ShippingActivity extends AppCompatActivity {
+public class CompletedActivity extends AppCompatActivity {
 
-    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, gCashPaymentRefNo, amountTv;
+    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, shipDate, receiveDate, gCashPaymentRefNo, amountTv;
     private Button btnPlaceOrder;
     private String ordersId;
     private int sum = 0;
@@ -52,7 +49,7 @@ public class ShippingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details_shipping);
+        setContentView(R.layout.activity_details_completed);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.action_bar_orders_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -70,6 +67,8 @@ public class ShippingActivity extends AppCompatActivity {
         OrderIdTv = findViewById(R.id.orderIdTv);
         confirmDate =findViewById(R.id.confirmDate);
         paymentDate = findViewById(R.id.paymentDate);
+        shipDate =findViewById(R.id.shipDate);
+        receiveDate = findViewById(R.id.receiveDate);
         cashPaymentRL = findViewById(R.id.cashPaymentRL);
         gCashPaymentRL = findViewById(R.id.gCashPaymentRL);
         gCashPaymentRefNo = findViewById(R.id.gCashPaymentRefNo);
@@ -126,7 +125,7 @@ public class ShippingActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ShippingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(CompletedActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -142,6 +141,8 @@ public class ShippingActivity extends AppCompatActivity {
                     Object orderId = map.get("cartId");
                     Object confirmdate = map.get("confirmdate");
                     Object paymentdate = map.get("paymentdate");
+                    Object shipdate = map.get("shipdate");
+                    Object receivedate = map.get("receivedate");
                     Object refno = map.get("refno");
                     Object payment = map.get("payment");
                     Object amount = map.get("amount");
@@ -158,13 +159,15 @@ public class ShippingActivity extends AppCompatActivity {
                     OrderIdTv.setText(String.valueOf(orderId));
                     confirmDate.setText(String.valueOf(confirmdate));
                     paymentDate.setText(String.valueOf(paymentdate));
+                    shipDate.setText(String.valueOf(shipdate));
+                    receiveDate.setText(String.valueOf(receivedate));
 
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ShippingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(CompletedActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

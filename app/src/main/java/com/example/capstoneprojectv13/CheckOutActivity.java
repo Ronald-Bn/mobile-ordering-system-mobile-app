@@ -47,10 +47,9 @@ import java.util.UUID;
 
 public class CheckOutActivity extends AppCompatActivity {
 
-    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip;
+    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, TvPhone, TvName;
     private Button btnPlaceOrder;
     private String subtotal;
-    private String Address, Zipcode, userName;
     private FirebaseFirestore fStore;
     private FirebaseAuth mAuth;
     private DatabaseReference databaseReference;
@@ -71,6 +70,9 @@ public class CheckOutActivity extends AppCompatActivity {
         getSupportActionBar().setCustomView(R.layout.action_bar_check_out);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+
+        TvName = findViewById(R.id.TvName);
+        TvPhone = findViewById(R.id.TvPhone);
         TvAddress = findViewById(R.id.TvAddress);
         TvZipCode = findViewById(R.id.TvZipcode);
         TvSubtotal = findViewById(R.id.SubTotalTv);
@@ -104,7 +106,8 @@ public class CheckOutActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
                     if (documentSnapshot.exists()) {
-                        userName = documentSnapshot.getString("FullName");
+                        TvName.setText(documentSnapshot.getString("FullName"));
+                        TvPhone.setText(documentSnapshot.getString("Phone"));
                         TvAddress.setText(documentSnapshot.getString("Address"));
                         TvZipCode.setText(documentSnapshot.getString("Zipcode"));
                     }
@@ -162,7 +165,8 @@ public class CheckOutActivity extends AppCompatActivity {
                 updateData.put("userid", user.getUid());
                 updateData.put("key", snapshot.getRef().getKey());
                 updateData.put("cartId",String.valueOf(generateCartId));
-                updateData.put("name", userName);
+                updateData.put("name", TvName.getText().toString());
+                updateData.put("phone", TvPhone.getText().toString());
                 updateData.put("address", TvAddress.getText().toString());
                 updateData.put("zipcode", TvZipCode.getText().toString());
                 updateData.put("date", dateAndTime());
@@ -195,7 +199,7 @@ public class CheckOutActivity extends AppCompatActivity {
                                     }
                                 });
 
-                                Toast.makeText(CheckOutActivity.this, "Add to Cart Successfully", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CheckOutActivity.this, "Placed order successfully", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(CheckOutActivity.this,MainActivity.class);
                                 startActivity(intent);
                                 finish();
@@ -220,7 +224,7 @@ public class CheckOutActivity extends AppCompatActivity {
     private String dateAndTime(){
         // Current Date and Time
         Date dateAndTime = Calendar.getInstance().getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
         String currentDate = dateFormat.format(dateAndTime);
         String currentTime = timeFormat.format(dateAndTime);

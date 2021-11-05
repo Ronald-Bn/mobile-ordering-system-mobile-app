@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
 
 public class PendingActivity extends AppCompatActivity {
 
-    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip , OrderDateTv, OrderIdTv;
+    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip , OrderDateTv, OrderIdTv, TvPhone, TvName;
     private Button btnPlaceOrder;
     private String uid;
     private String ordersId;
@@ -71,6 +71,8 @@ public class PendingActivity extends AppCompatActivity {
         getSupportActionBar().setCustomView(R.layout.action_bar_orders_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        TvName = findViewById(R.id.TvName);
+        TvPhone = findViewById(R.id.TvPhone);
         TvAddress = findViewById(R.id.TvAddress);
         TvZipCode = findViewById(R.id.TvZipcode);
         TvSubtotal = findViewById(R.id.SubTotalTv);
@@ -113,6 +115,8 @@ public class PendingActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
                     if (documentSnapshot.exists()) {
+                        TvName.setText(documentSnapshot.getString("FullName"));
+                        TvPhone.setText(documentSnapshot.getString("Phone"));
                         TvAddress.setText(documentSnapshot.getString("Address"));
                         TvZipCode.setText(documentSnapshot.getString("Zipcode"));
                     }
@@ -131,19 +135,8 @@ public class PendingActivity extends AppCompatActivity {
                     Object orderDate = map.get("date");
                     Object orderId = map.get("cartId");
 
-                    String input =  String.valueOf(orderId);
-                    String orderID;
-
-                    if (input.length() > 12)
-                    {
-                        orderID = input.substring(0, 12);
-                    }
-                    else
-                    {
-                        orderID = input;
-                    }
                     OrderDateTv.setText(String.valueOf(orderDate));
-                    OrderIdTv.setText(replaceAll(orderID));
+                    OrderIdTv.setText(String.valueOf(orderId));
                 }
             }
 
@@ -178,11 +171,6 @@ public class PendingActivity extends AppCompatActivity {
             }
         });
     }
-
-    private static String replaceAll(String string){
-        return string.replaceAll("\\D+","");
-    }
-
 
     @Override
     public void onStart() {

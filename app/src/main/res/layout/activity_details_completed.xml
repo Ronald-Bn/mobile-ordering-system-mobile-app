@@ -122,100 +122,108 @@
                     android:paddingEnd="20dp"
                     android:paddingBottom="10dp">
 
+
+
+
+                    <RelativeLayout
+                        android:id="@+id/cashPaymentRL"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:text="Cash on Delivery"
+                            android:textStyle="bold"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Select payment method"
+                        android:text="Payment method"
                         android:textAllCaps="false"
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
-                    <RadioGroup
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:id="@+id/radioGroup" >
-
-                        <RadioButton
-                            android:id="@+id/radio_one"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:minHeight="0dp"
-                            android:text="Cash on delivery"
-                            android:textSize="14sp"
-                            android:onClick="onRadioButtonClicked"
-                            tools:ignore="OnClick" />
-
-                        <RadioButton
-                            android:id="@+id/radio_two"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:minHeight="0dp"
-                            android:text="Gcash"
-                            android:textSize="14sp"
-                            android:onClick="onRadioButtonClicked"
-                            tools:ignore="OnClick"/>
-
-                     </RadioGroup>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/PaymentLayout2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="-10dp"
-                    android:visibility="gone" >
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    <RelativeLayout
+                        android:id="@+id/gCashPaymentRL"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_gravity="center"
-                        android:hint="Reference No.">
-
-                        <EditText
-                            android:id="@+id/referenceNoEt"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginBottom="10dp"
-                            android:inputType="number"
-                            android:textSize="14sp"
-                            android:ems="10"
-                            tools:ignore="TextFields"
-                            android:importantForAutofill="no" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_gravity="center"
                         android:layout_marginTop="10dp"
-                        android:layout_marginBottom="20dp"
-                        android:hint="Amount">
+                        >
 
-                        <EditText
-                            android:id="@+id/amountEt"
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="10dp"
-                            android:inputType="numberDecimal"
-                            android:textSize="14sp"
-                            android:ems="10"
-                            tools:ignore="TextFields"
-                            android:importantForAutofill="no" />
 
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:text="GCash"
+                            android:textSize="14sp"
+                            android:textStyle="bold"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_alignParentEnd="true">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_gravity="end">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="end"
+                                    android:layout_marginEnd="20dp"
+                                    android:text="Ref no."
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/gCashPaymentRefNo"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="end"
+                                    android:text="40"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp" />
+                            </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:layout_gravity="end"
+                                    android:layout_marginTop="10dp">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="end"
+                                        android:layout_marginEnd="20dp"
+                                        android:text="Amount:"
+                                        android:textColor="@color/black"
+                                        android:textSize="14sp" />
+
+                                    <TextView
+                                        android:id="@+id/amountTv"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="end"
+                                        android:text="40"
+                                        android:textColor="@color/black"
+                                        android:textSize="14sp"
+                                        app:drawableStartCompat="@drawable/layer_icon_red" />
+                                </LinearLayout>
+                        </LinearLayout>
+                    </RelativeLayout>
                 </LinearLayout>
 
             <View style="@style/ld_m" />
@@ -324,6 +332,7 @@
                         android:textStyle="bold"
                         android:textSize="14sp" />
                 </RelativeLayout>
+
                 <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -333,7 +342,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
-                            android:text="Order Date"
+                            android:text="Order date "
                             android:textSize="14sp" />
 
                         <TextView
@@ -353,11 +362,73 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:text="Confirm Date"
+                        android:text="Confirm date "
                         android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/confirmDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="Time"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="Paid date "
+
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/paymentDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="Time"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="Shipped date"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/shipDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="Time"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="Received date"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/receiveDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"

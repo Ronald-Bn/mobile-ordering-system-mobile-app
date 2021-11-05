@@ -208,7 +208,8 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
                     updateData.put("payment", "Cash on delivery");
                     updateData.put("status", "shipping");
-                    updateData.put("payment time", dateAndTime());
+                    updateData.put("amount", "0");
+                    updateData.put("paymentdate", dateAndTime());
 
 
                             rootRef.updateChildren(updateData)
@@ -255,7 +256,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         updateData.put("status","shipping");
                         updateData.put("refno", referenceNoEt.getText().toString().trim());
                         updateData.put("amount", amountEt.getText().toString().trim());
-                        updateData.put("paymenttime", dateAndTime());
+                        updateData.put("paymentdate", dateAndTime());
 
                         rootRef.updateChildren(updateData)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -303,7 +304,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     private String dateAndTime(){
         // Current Date and Time
         Date dateAndTime = Calendar.getInstance().getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
         String currentDate = dateFormat.format(dateAndTime);
         String currentTime = timeFormat.format(dateAndTime);
@@ -328,7 +329,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         super.onPause();
         state = recyclerView.getLayoutManager().onSaveInstanceState();
     }
-
 
     private static String replaceAll(String string){
         return string.replaceAll("\\D+","");

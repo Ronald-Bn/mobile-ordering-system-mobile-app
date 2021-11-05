@@ -10,10 +10,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,52 +32,58 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Map;
 
-public class ShippingActivity extends AppCompatActivity {
+public class CancelledActivity extends AppCompatActivity {
 
-    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, gCashPaymentRefNo, amountTv;
+    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip , OrderDateTv, OrderIdTv, rejectDate, remarksTv, TvPhone, TvName;
     private Button btnPlaceOrder;
+    private String uid;
     private String ordersId;
     private int sum = 0;
     private FirebaseFirestore fStore;
+    private FirebaseAuth mAuth;
     private DatabaseReference databaseReference;
     private RecyclerView recyclerView;
     private CartAdapter cartAdapter;
     private Parcelable state;
-    private FirebaseAuth mAuth;
-    private RelativeLayout cashPaymentRL, gCashPaymentRL;
+    private LinearLayout linearLayout,linearLayout2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details_shipping);
+        setContentView(R.layout.activity_details_cancelled);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.action_bar_orders_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String cartId = getIntent().getStringExtra("cartId");
-        ordersId = getIntent().getStringExtra("ordersId");
-
+        TvName = findViewById(R.id.TvName);
+        TvPhone = findViewById(R.id.TvPhone);
         TvAddress = findViewById(R.id.TvAddress);
         TvZipCode = findViewById(R.id.TvZipcode);
         TvSubtotal = findViewById(R.id.SubTotalTv);
         TvShip = findViewById(R.id.ShipPriceTv);
         TvTotalPayment = findViewById(R.id.TvTotalTv);
-        btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
         OrderDateTv = findViewById(R.id.orderDateTv);
         OrderIdTv = findViewById(R.id.orderIdTv);
-        confirmDate =findViewById(R.id.confirmDate);
-        paymentDate = findViewById(R.id.paymentDate);
-        cashPaymentRL = findViewById(R.id.cashPaymentRL);
-        gCashPaymentRL = findViewById(R.id.gCashPaymentRL);
-        gCashPaymentRefNo = findViewById(R.id.gCashPaymentRefNo);
-        amountTv = findViewById(R.id.amountTv);
+        btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
+        rejectDate = findViewById(R.id.rejectDate);
+        remarksTv = findViewById(R.id.remarksTv);
 
+        String cartId = getIntent().getStringExtra("cartId");
+        ordersId = getIntent().getStringExtra("ordersId");
+
+        linearLayout = findViewById(R.id.PaymentLayout);
+        linearLayout2 = findViewById(R.id.PaymentLayout2);
+        linearLayout.setVisibility(View.GONE);
+
+        mAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        uid = user.getUid();
 
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        fStore = FirebaseFirestore.getInstance();
-        FirebaseUser user = mAuth.getInstance().getCurrentUser();
+
         FirebaseRecyclerOptions<CartModel> options =
                 new FirebaseRecyclerOptions.Builder<CartModel>()
                         .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Cart")
@@ -90,18 +93,45 @@ public class ShippingActivity extends AppCompatActivity {
         cartAdapter = new CartAdapter(this, options);
         recyclerView.setAdapter(cartAdapter);
 
-
-        DocumentReference documentReference = fStore.collection("Users").document(user.getUid());
+        DocumentReference documentReference = fStore.collection("Users").document(uid);
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
                     if (documentSnapshot.exists()) {
+                        TvName.setText(documentSnapshot.getString("FullName"));
+                        TvPhone.setText(documentSnapshot.getString("Phone"));
                         TvAddress.setText(documentSnapshot.getString("Address"));
                         TvZipCode.setText(documentSnapshot.getString("Zipcode"));
                     }
                 }
+            }
+        });
+
+        databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference("Orders");
+        databaseReference.orderByChild("cartId").equalTo(cartId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren())
+                {
+                    Map<String,Object> map = (Map<String, Object>) ds.getValue();
+                    Object orderDate = map.get("date");
+                    Object orderId = map.get("cartId");
+                    Object rejectdate = map.get("rejectdate");
+                    Object remarkstv = map.get("remarks");
+
+                    OrderDateTv.setText(String.valueOf(orderDate));
+                    OrderIdTv.setText(String.valueOf(orderId));
+                    rejectDate.setText(String.valueOf(rejectdate));
+                    remarksTv.setText(String.valueOf(remarkstv));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(CancelledActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -126,48 +156,11 @@ public class ShippingActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ShippingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference("Orders");
-        databaseReference.orderByChild("cartId").equalTo(cartId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot ds : snapshot.getChildren())
-                {
-                    Map<String,Object> map = (Map<String, Object>) ds.getValue();
-                    Object orderDate = map.get("date");
-                    Object orderId = map.get("cartId");
-                    Object confirmdate = map.get("confirmdate");
-                    Object paymentdate = map.get("paymentdate");
-                    Object refno = map.get("refno");
-                    Object payment = map.get("payment");
-                    Object amount = map.get("amount");
-
-                    if(String.valueOf(payment).equals("Gcash")){
-                        gCashPaymentRL.setVisibility(View.VISIBLE);
-                        gCashPaymentRefNo.setText(String.valueOf(refno));
-                        amountTv.setText(String.valueOf(amount));
-                    }else{
-                        cashPaymentRL.setVisibility(View.VISIBLE);
-                    }
-
-                    OrderDateTv.setText(String.valueOf(orderDate));
-                    OrderIdTv.setText(String.valueOf(orderId));
-                    confirmDate.setText(String.valueOf(confirmdate));
-                    paymentDate.setText(String.valueOf(paymentdate));
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ShippingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(CancelledActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 
     @Override
     public void onStart() {

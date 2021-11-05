@@ -44,6 +44,7 @@ public class CartAdapter extends FirebaseRecyclerAdapter<CartModel,CartAdapter.m
                 .load(model.getImage())
                 .error(R.drawable.common_google_signin_btn_icon_dark_normal)
                 .into(holder.CartImageIv);
+
     }
 
     @NonNull

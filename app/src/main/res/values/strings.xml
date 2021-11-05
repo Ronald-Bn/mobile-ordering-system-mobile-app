@@ -15,7 +15,7 @@
     <string name="confirm_password">Confirm password</string>
     <string name="address">Address</string>
     <string name="zipcode">Zipcode</string>
-    <string name="termsAndCondition">I agreed to Chasy Product\'s \n<b><font fgcolor='#DA0000'> Terms and Conditions</font> and <font fgcolor='#DA0000'>Privacy Policy. </font></b></string>
+    <string name="termsAndCondition">Copyright © Chasy Products 2021</string>
     <string name="checkbox">I agree to Chasy Product\'s<b>Terms and Conditions and Privacy Policy.</b></string>
     <string name="name">Name</string>
     <string name="price">Price</string>

@@ -6,12 +6,18 @@
     android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.AppCompatTextView
-        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+        tyle="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
         android:id="@+id/tvTitle"
         android:gravity="center"
-        android:text="Payment Method"
-        android:textColor="@color/white"
+        android:textStyle="normal"
+        android:fontFamily="sans-serif"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Payment Method"
+        android:textSize="18sp"
+        android:letterSpacing="0.05"
+        android:textColor="@color/white"/>
+
 
 </LinearLayout>

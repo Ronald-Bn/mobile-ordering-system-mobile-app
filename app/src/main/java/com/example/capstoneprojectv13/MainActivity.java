@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.notification_nav:
-                        fragment = new FragmentCart();
+                        fragment = new FragmentNotifications();
                         break;
 
                     case R.id.profile_nav:

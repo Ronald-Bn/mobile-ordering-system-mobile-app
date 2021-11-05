@@ -14,6 +14,7 @@ import android.widget.Button;
 
 import com.example.capstoneprojectv13.R;
 import com.example.capstoneprojectv13.adapter.OrdersAdapter;
+import com.example.capstoneprojectv13.adapter.OrdersCancelledAdapter;
 import com.example.capstoneprojectv13.model.OrdersModel;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +36,7 @@ public class FragmentOrderCancelled extends Fragment {
     private String mParam1;
     private String mParam2;
     private RecyclerView recyclerView;
-    private OrdersAdapter ordersAdapter;
+    private OrdersCancelledAdapter ordersCancelledAdapter;
     private Parcelable state;
 
     public FragmentOrderCancelled() {
@@ -85,13 +86,9 @@ public class FragmentOrderCancelled extends Fragment {
                                 .orderByChild("status").equalTo("rejected"), OrdersModel.class)
                         .build();
 
-
-
-        ordersAdapter = new OrdersAdapter(view.getContext(),options);
-        recyclerView.setAdapter(ordersAdapter);
+        ordersCancelledAdapter = new OrdersCancelledAdapter(view.getContext(),options);
+        recyclerView.setAdapter(ordersCancelledAdapter);
         return view;
-
-
 
     }
 
@@ -111,6 +108,6 @@ public class FragmentOrderCancelled extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        ordersAdapter.startListening();
+        ordersCancelledAdapter.startListening();
     }
 }

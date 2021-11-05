@@ -13,10 +13,9 @@ import android.view.ViewGroup;
 
 import com.example.capstoneprojectv13.R;
 import com.example.capstoneprojectv13.adapter.OrdersAdapter;
+import com.example.capstoneprojectv13.adapter.OrdersCompletedAdapter;
 import com.example.capstoneprojectv13.model.OrdersModel;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 /**
@@ -35,7 +34,8 @@ public class FragmentOrderCompleted extends Fragment {
     private String mParam1;
     private String mParam2;
     private RecyclerView recyclerView;
-    private OrdersAdapter ordersAdapter;
+
+    private OrdersCompletedAdapter ordersCompletedAdapter;
     private Parcelable state;
 
     public FragmentOrderCompleted() {
@@ -85,8 +85,8 @@ public class FragmentOrderCompleted extends Fragment {
                                 .child("Orders").orderByChild("status").equalTo("completed"), OrdersModel.class)
                         .build();
 
-        ordersAdapter = new OrdersAdapter(view.getContext(),options);
-        recyclerView.setAdapter(ordersAdapter);
+        ordersCompletedAdapter = new OrdersCompletedAdapter(view.getContext(),options);
+        recyclerView.setAdapter(ordersCompletedAdapter);
 
         return view;
     }
@@ -106,6 +106,6 @@ public class FragmentOrderCompleted extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        ordersAdapter.startListening();
+        ordersCompletedAdapter.startListening();
     }
 }

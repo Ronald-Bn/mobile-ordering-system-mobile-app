@@ -10,9 +10,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,9 +32,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Map;
 
-public class ShippingActivity extends AppCompatActivity {
+public class ReceivingActivity extends AppCompatActivity {
 
-    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, gCashPaymentRefNo, amountTv;
+    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, shipDate, gCashPaymentRefNo, amountTv;
     private Button btnPlaceOrder;
     private String ordersId;
     private int sum = 0;
@@ -52,9 +49,9 @@ public class ShippingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details_shipping);
+        setContentView(R.layout.activity_details_receiving);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.action_bar_orders_details);
+        getSupportActionBar().setCustomView(R.layout.action_bar_payment_options);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String cartId = getIntent().getStringExtra("cartId");
@@ -70,6 +67,7 @@ public class ShippingActivity extends AppCompatActivity {
         OrderIdTv = findViewById(R.id.orderIdTv);
         confirmDate =findViewById(R.id.confirmDate);
         paymentDate = findViewById(R.id.paymentDate);
+        shipDate =findViewById(R.id.shipDate);
         cashPaymentRL = findViewById(R.id.cashPaymentRL);
         gCashPaymentRL = findViewById(R.id.gCashPaymentRL);
         gCashPaymentRefNo = findViewById(R.id.gCashPaymentRefNo);
@@ -126,7 +124,7 @@ public class ShippingActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ShippingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ReceivingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -142,6 +140,7 @@ public class ShippingActivity extends AppCompatActivity {
                     Object orderId = map.get("cartId");
                     Object confirmdate = map.get("confirmdate");
                     Object paymentdate = map.get("paymentdate");
+                    Object shipdate = map.get("shipdate");
                     Object refno = map.get("refno");
                     Object payment = map.get("payment");
                     Object amount = map.get("amount");
@@ -158,13 +157,14 @@ public class ShippingActivity extends AppCompatActivity {
                     OrderIdTv.setText(String.valueOf(orderId));
                     confirmDate.setText(String.valueOf(confirmdate));
                     paymentDate.setText(String.valueOf(paymentdate));
+                    shipDate.setText(String.valueOf(shipdate));
 
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ShippingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ReceivingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

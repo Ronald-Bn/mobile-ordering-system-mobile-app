@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.example.capstoneprojectv13.R;
 import com.example.capstoneprojectv13.adapter.OrdersAdapter;
+import com.example.capstoneprojectv13.adapter.OrdersShippingAdapter;
 import com.example.capstoneprojectv13.model.OrdersModel;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +36,7 @@ public class FragmentOrderShipping extends Fragment {
     private String mParam1;
     private String mParam2;
     private RecyclerView recyclerView;
-    private OrdersAdapter ordersAdapter;
+    private OrdersShippingAdapter ordersShippingAdapter;
     private FirebaseAuth mAuth;
     private Parcelable state;
 
@@ -88,10 +89,15 @@ public class FragmentOrderShipping extends Fragment {
                                 .child("Orders").orderByChild("status").equalTo("shipping"), OrdersModel.class)
                         .build();
 
-        ordersAdapter = new OrdersAdapter(view.getContext(),options);
-        ordersAdapter.activateButtons(true, "Shipping");
-        recyclerView.setAdapter(ordersAdapter);
+        ordersShippingAdapter = new OrdersShippingAdapter(view.getContext(),options);
+        recyclerView.setAdapter(ordersShippingAdapter);
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ordersShippingAdapter.startListening();
     }
 
     @Override
@@ -104,11 +110,5 @@ public class FragmentOrderShipping extends Fragment {
     public void onResume() {
         super.onResume();
         recyclerView.getLayoutManager().onRestoreInstanceState(state);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        ordersAdapter.startListening();
     }
 }
