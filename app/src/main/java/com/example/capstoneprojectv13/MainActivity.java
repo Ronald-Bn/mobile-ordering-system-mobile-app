@@ -100,5 +100,4 @@ public class MainActivity extends AppCompatActivity {
         mainProductsAdapter = new MainProductsAdapter(this, options);
         mainProductsAdapter.startListening();
     }
-
 }

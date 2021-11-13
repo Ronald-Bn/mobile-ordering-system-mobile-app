@@ -11,41 +11,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CapstoneProjectv13">
-        <activity android:name=".CancelledActivity"></activity>
-        <activity android:name=".CompletedActivity" />
-        <activity android:name=".ReceivingActivity" />
-        <activity android:name=".ShippingActivity" />
-        <activity
-            android:name=".PendingActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".PaymentActivity" />
-        <activity
-            android:name=".CheckOutActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".ProductsActivity"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.ProductPage" />
-        <activity
-            android:name=".PasswordActivity"
-            android:parentActivityName=".LoginActivity"
-            android:theme="@style/Theme.PasswordActivity" />
-        <activity
-            android:name=".LoginActivity"
-            android:theme="@style/Theme.LoginActivity">
+        <activity android:name=".CancelledActivity" android:screenOrientation="portrait" ></activity>
+        <activity android:name=".CompletedActivity" android:screenOrientation="portrait" />
+        <activity android:name=".ReceivingActivity" android:screenOrientation="portrait" />
+        <activity android:name=".ShippingActivity" android:screenOrientation="portrait" />
+        <activity android:name=".PendingActivity" android:screenOrientation="portrait" />
+        <activity android:name=".PaymentActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HomePage" />
+        <activity android:name=".CheckOutActivity" android:screenOrientation="portrait" />
+        <activity android:name=".ProductsActivity" android:screenOrientation="portrait" />
+        <activity android:name=".PasswordActivity" android:screenOrientation="portrait"  />
+        <activity android:name=".LoginActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".RegisterActivity"
-            android:parentActivityName=".LoginActivity" />
-        <activity android:name=".PhoneAuthActivity" />
-        <activity
-            android:name=".MainActivity"
-            android:theme="@style/Theme.Home" />
+        <activity android:name=".RegisterActivity" android:screenOrientation="portrait"  />
+        <activity android:name=".PhoneAuthActivity" android:screenOrientation="portrait" />
+        <activity android:name=".MainActivity" android:screenOrientation="portrait"  android:theme="@style/Theme.HomePage" />
     </application>
-
 </manifest>

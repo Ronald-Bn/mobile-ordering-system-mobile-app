@@ -3,6 +3,7 @@ package com.example.capstoneprojectv13;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -65,10 +66,12 @@ public class CheckOutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_out);
-
+        Toolbar mToolbar = findViewById(R.id.toolbar_check_out);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.action_bar_check_out);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setTitle("");
+        mToolbar.setNavigationOnClickListener(view -> onBackPressed());
 
 
         TvName = findViewById(R.id.TvName);

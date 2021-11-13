@@ -1,7 +1,9 @@
 package com.example.capstoneprojectv13;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,10 +27,12 @@ public class PasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forget_password);
-
+        Toolbar mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(" ");
-        getSupportActionBar().setElevation(0);
+        mToolbar.setTitle("");
+        mToolbar.setNavigationOnClickListener(view -> onBackPressed());
 
         mAuth = FirebaseAuth.getInstance();
         etSendEmail = findViewById(R.id.etEmail);

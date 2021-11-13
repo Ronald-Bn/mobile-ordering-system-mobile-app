@@ -3,6 +3,7 @@ package com.example.capstoneprojectv13;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,7 +48,7 @@ import java.util.Map;
 
 public class PaymentActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate;
+    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, TvPhone, TvName;
     private Button btnPlaceOrder;
     private String ordersId;
     private int sum = 0;
@@ -64,10 +65,15 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_payment);
+        Toolbar mToolbar = findViewById(R.id.toolbar_order_details);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.action_bar_payment_options);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setTitle("");
+        mToolbar.setNavigationOnClickListener(view -> onBackPressed());;
 
+        TvName = findViewById(R.id.TvName);
+        TvPhone = findViewById(R.id.TvPhone);
         TvAddress = findViewById(R.id.TvAddress);
         TvZipCode = findViewById(R.id.TvZipcode);
         TvSubtotal = findViewById(R.id.SubTotalTv);
@@ -114,6 +120,8 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 if (task.isSuccessful()) {
                         DocumentSnapshot documentSnapshot = task.getResult();
                         if (documentSnapshot.exists()) {
+                            TvName.setText(documentSnapshot.getString("FullName"));
+                            TvPhone.setText(documentSnapshot.getString("Phone"));
                             TvAddress.setText(documentSnapshot.getString("Address"));
                             TvZipCode.setText(documentSnapshot.getString("Zipcode"));
                         }

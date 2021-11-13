@@ -35,11 +35,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
             android:ems="10"
-            android:textColorHint="@xml/selector"
             android:inputType="textEmailAddress"
-            android:textSize="14sp"
             android:textColor="@color/white"
-            tools:ignore="TextFields" />
+            android:textSize="14sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -50,19 +48,20 @@
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:hint="@string/password"
-        app:boxStrokeColor="@color/white"
-        android:textColorHint="@color/white">
+        android:textColorHint="@color/white"
+        app:boxStrokeColor="@color/white" >
 
         <EditText
             android:id="@+id/etPassword"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:textColorHint="@xml/selector"
             android:ems="10"
             android:textSize="14sp"
             android:textColor="@color/white"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:autofillHints=""
+            tools:ignore="LabelFor" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -71,7 +70,7 @@
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:gravity="right">
+                android:gravity="end">
 
                 <TextView
                     android:id="@+id/ForgetPassword"
@@ -94,7 +93,8 @@
         android:text="@string/sign_in"
         android:textColor="@color/black"
         android:textAllCaps="false"
-        android:foreground="?attr/selectableItemBackgroundBorderless" />
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        app:backgroundTint="@color/white"/>
 
     <TextView
         android:layout_width="300dp"
@@ -117,6 +117,7 @@
         android:textColor="@color/black"
         android:background="@drawable/custom_button"
         android:textAllCaps="false"
+        app:backgroundTint="@color/white"
         android:foreground="?attr/selectableItemBackgroundBorderless"/>
 
 </LinearLayout>

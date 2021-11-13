@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light"
+    android:orientation="vertical"
     tools:context=".CheckOutActivity">
+
+    <LinearLayout
+        android:id="@+id/container_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar_order_details"
+            layout="@layout/toolbar_order_details" />
+
+    </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -54,7 +71,7 @@
                         android:gravity="bottom"
                         android:orientation="horizontal" >
 
-                        <TextView
+                            <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
@@ -72,6 +89,26 @@
                     </LinearLayout>
 
                     <TextView
+                    android:id="@+id/TvName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="Name"
+                    android:textAllCaps="false"
+                    android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/TvPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:text="Phone number"
+                        android:textAllCaps="false"
+                        android:textSize="14sp" />
+
+                    <TextView
                         android:id="@+id/TvAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -79,8 +116,7 @@
                         android:layout_marginEnd="20dp"
                         android:text="Delivery Address"
                         android:textAllCaps="false"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/TvZipcode"
@@ -90,8 +126,7 @@
                         android:layout_marginBottom="10dp"
                         android:text="1421"
                         android:textAllCaps="false"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
@@ -368,11 +403,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:orientation="vertical"
-        android:layout_alignParentBottom="true">
 
     <LinearLayout
         android:id="@+id/bottom_panel"
@@ -383,43 +413,43 @@
         android:background="@color/white"
         android:gravity="end">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="5dp"
-            android:orientation="vertical"
-            >
-
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:text="Total Payment"
-                android:textSize="12sp"
-                />
+                android:layout_gravity="center"
+                android:layout_marginEnd="5dp"
+                android:orientation="vertical"
+                >
 
-            <TextView
-                android:id="@+id/TvTotalTv"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="Total Payment"
+                    android:textSize="12sp"
+                    />
+
+                <TextView
+                    android:id="@+id/TvTotalTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="0"
+                    android:textColor="@color/reddish"
+                    android:textSize="16sp"
+                    app:drawableStartCompat="@drawable/layer_icon_red" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnPlaceOrder"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:text="0"
-                android:textColor="@color/reddish"
-                android:textSize="16sp"
-                app:drawableStartCompat="@drawable/layer_icon_red" />
-        </LinearLayout>
+                android:layout_height="match_parent"
+                android:background="@drawable/custom_button_cart"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:text="Cancel order"
+                android:textColor="@color/white"
+                app:backgroundTint="@color/reddish" />
 
-        <Button
-            android:id="@+id/btnPlaceOrder"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/custom_button_cart"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:text="Cancel order"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/reddish" />
-
-        </LinearLayout>
-    </LinearLayout>
-</RelativeLayout>
+            </LinearLayout>
+        </RelativeLayout>
+</LinearLayout>
