@@ -60,7 +60,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     private Parcelable state;
     private RadioButton cashPaymentBtn, gCashPaymentBtn;
     private LinearLayout linearLayout,linearLayout2 ;
-    private EditText referenceNoEt, amountEt;
+    private EditText referenceNoEt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +84,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
         OrderDateTv = findViewById(R.id.orderDateTv);
         OrderIdTv = findViewById(R.id.orderIdTv);
-        amountEt = findViewById(R.id.amountEt);
         confirmDate =findViewById(R.id.confirmDate);
         referenceNoEt =findViewById(R.id.referenceNoEt);
         btnPlaceOrder.setOnClickListener(this);
@@ -247,9 +246,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
     }
     private void gCashPayment(){
-        if(TextUtils.isEmpty(amountEt.getText().toString())){
-            Toast.makeText(this, "Enter the amount", Toast.LENGTH_SHORT).show();
-        }else if(TextUtils.isEmpty(referenceNoEt.getText().toString())){
+            if(TextUtils.isEmpty(referenceNoEt.getText().toString())){
             Toast.makeText(this, "Enter the reference number", Toast.LENGTH_SHORT).show();
         }else{
             DatabaseReference rootRef = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
@@ -263,7 +260,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         updateData.put("payment","Gcash");
                         updateData.put("status","shipping");
                         updateData.put("refno", referenceNoEt.getText().toString().trim());
-                        updateData.put("amount", amountEt.getText().toString().trim());
                         updateData.put("paymentdate", dateAndTime());
 
                         rootRef.updateChildren(updateData)

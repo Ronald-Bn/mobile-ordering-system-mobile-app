@@ -17,6 +17,7 @@ import com.example.capstoneprojectv13.R;
 import com.example.capstoneprojectv13.model.OrdersModel;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DatabaseReference;
 
 
 public class OrdersPaymentAdapter extends FirebaseRecyclerAdapter<OrdersModel,OrdersPaymentAdapter.myViewHolder> {
@@ -37,7 +38,6 @@ public class OrdersPaymentAdapter extends FirebaseRecyclerAdapter<OrdersModel,Or
 
     @Override
     protected void onBindViewHolder(@NonNull myViewHolder holder, int position, @NonNull OrdersModel model) {
-
         holder.OrdersCartIdTv.setText(getRef(position).getKey());
         holder.OrdersNameTv.setText(model.getCartId());
         holder.OrdersDateTv.setText(model.getDate());

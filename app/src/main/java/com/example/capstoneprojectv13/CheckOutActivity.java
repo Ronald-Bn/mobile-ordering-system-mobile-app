@@ -126,9 +126,16 @@ public class CheckOutActivity extends AppCompatActivity {
 
         TvTotalPayment.setText(String.valueOf(c));
 
+        DatabaseReference fromPath = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference().child("Cart").child(user.getUid());
+
+        DatabaseReference toPath = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference().child("Cart_List").child(user.getUid()).child(String.valueOf(generateCartId));
+
         btnPlaceOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                shiftCart(fromPath,toPath);
                 addToOrders();
             }
         });
@@ -153,6 +160,31 @@ public class CheckOutActivity extends AppCompatActivity {
         recyclerView.getLayoutManager().onRestoreInstanceState(state);
     }
 
+
+
+    private void shiftCart(final DatabaseReference fromPath, final DatabaseReference toPath){
+        fromPath.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                toPath.setValue(dataSnapshot.getValue(), new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError firebaseError, DatabaseReference firebase) {
+                        if (firebaseError != null) {
+                            Toast.makeText(CheckOutActivity.this, "Fail", Toast.LENGTH_SHORT).show();
+                        } else {
+                            fromPath.removeValue();
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(CheckOutActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     private void addToOrders () {
         FirebaseUser user = mAuth.getInstance().getCurrentUser();

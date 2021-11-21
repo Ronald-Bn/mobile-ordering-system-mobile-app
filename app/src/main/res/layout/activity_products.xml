@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ProductsActivity">
+
+    <LinearLayout
+        android:id="@+id/container_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -94,6 +111,7 @@
                         android:minHeight="0dp"
                         android:onClick="decrement"
                         android:text="-"
+                        android:textColor="@color/white"
                         tools:ignore="UnusedAttribute" />
 
                     <EditText
@@ -115,7 +133,8 @@
                         android:minWidth="0dp"
                         android:minHeight="0dp"
                         android:onClick="increment"
-                        android:text="+" />
+                        android:text="+"
+                        android:textColor="@color/white"/>
                 </LinearLayout>
             </RelativeLayout>
 
@@ -138,16 +157,15 @@
 
         </LinearLayout>
     </ScrollView>
-
         <Button
             android:id="@+id/BtnAddToCart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:background="@drawable/custom_button_cart"
             android:text="Add to cart"
+            android:textColor="@color/white"
             app:backgroundTint="@color/reddish"
             android:foreground="?attr/selectableItemBackgroundBorderless"/>
-
-</RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

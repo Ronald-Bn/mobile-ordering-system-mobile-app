@@ -84,6 +84,7 @@
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
                     android:text="Check out"
+                    android:textColor="@color/white"
                     android:background="@drawable/custom_button_cart"
                     app:backgroundTint="@color/reddish"
                     android:foreground="?attr/selectableItemBackgroundBorderless" />

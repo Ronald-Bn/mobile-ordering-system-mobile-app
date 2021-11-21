@@ -2,7 +2,9 @@ package com.example.capstoneprojectv13;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,7 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class ProductsActivity extends AppCompatActivity implements ICartLoadListener {
+public class ProductsActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private DatabaseReference databaseReference;
@@ -63,7 +65,6 @@ public class ProductsActivity extends AppCompatActivity implements ICartLoadList
     private String uid, username;
 
     private String pid, price , name, image;
-    private ICartLoadListener cartLoadListener;
     private Parcelable state;
     private RecyclerView recyclerView;
     private ReviewsAdapter reviewAdapter;
@@ -74,11 +75,12 @@ public class ProductsActivity extends AppCompatActivity implements ICartLoadList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_products);
 
+        Toolbar mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#DA0000")));
-        getSupportActionBar().setTitle(" ");
-
-        cartLoadListener = this;
+        mToolbar.setTitle("");
+        mToolbar.setNavigationOnClickListener(view -> onBackPressed());;
 
         nameTv = findViewById(R.id. ProductNameTv);
         priceTv = findViewById(R.id.ProductPriceTv);
@@ -186,7 +188,7 @@ public class ProductsActivity extends AppCompatActivity implements ICartLoadList
                 return true;
 
             case R.id.star_menu:
-                 GetRatings();
+                 getRatings();
                 return true;
 
             default: return super.onOptionsItemSelected(item);
@@ -216,7 +218,7 @@ public class ProductsActivity extends AppCompatActivity implements ICartLoadList
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                if(snapshot.exists()) // If the product exists in database
+                if(snapshot.exists() && snapshot.hasChild("cartId")) // If the product exists in database
                 {
                     CartModel cartModel = snapshot.getValue(CartModel.class);
                     cartModel.setQuantity(cartModel.getQuantity()+number);
@@ -240,7 +242,6 @@ public class ProductsActivity extends AppCompatActivity implements ICartLoadList
                 }
                 else // If product does not have in database
                 {
-
                     CartModel cartModel = new CartModel();
                     cartModel.setName(name);
                     cartModel.setImage(image);
@@ -272,7 +273,7 @@ public class ProductsActivity extends AppCompatActivity implements ICartLoadList
 
     }
 
-    private void GetRatings(){
+    private void getRatings(){
         dialog.setContentView(R.layout.reviews);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
@@ -303,16 +304,5 @@ public class ProductsActivity extends AppCompatActivity implements ICartLoadList
                 }
             }
         );
-    }
-
-    @Override
-    public void onCartLoadSuccess(List<CartModel> cartModelList) {
-
-
-    }
-
-    @Override
-    public void onCartLoadFailed(String message) {
-
     }
 }

@@ -2,11 +2,14 @@
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +19,18 @@ import com.example.capstoneprojectv13.R;
 import com.example.capstoneprojectv13.adapter.OrdersAdapter;
 import com.example.capstoneprojectv13.adapter.OrdersPendingAdapter;
 import com.example.capstoneprojectv13.model.OrdersModel;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
-/**
+    /**
  * A simple {@link Fragment} subclass.
  * Use the {@link FragmentOrderPending#newInstance} factory method to
  * create an instance of this fragment.
@@ -80,14 +89,16 @@ public class FragmentOrderPending extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
+
+        Query query = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
+                .child("Orders").orderByChild("status_userid").equalTo("pending_" + user.getUid());
+
         FirebaseRecyclerOptions<OrdersModel> options =
                 new FirebaseRecyclerOptions.Builder<OrdersModel>()
-                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
-                                .child("Orders").orderByChild("status").equalTo("pending"), OrdersModel.class)
-                        .build();
+                        .setQuery(query,OrdersModel.class).build();
+
 
         ordersPendingAdapter = new OrdersPendingAdapter(view.getContext(),options);
         recyclerView.setAdapter(ordersPendingAdapter);
