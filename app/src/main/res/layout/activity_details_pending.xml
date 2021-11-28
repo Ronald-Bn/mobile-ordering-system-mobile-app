@@ -45,7 +45,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Waiting for the seller to confirm \n your order(s)."
+                                android:text="Waiting for Seller to confirm \n your order(s)."
                                 android:textSize="14sp"
                                 android:textColor="@color/white"/>
 
@@ -53,6 +53,7 @@
                                 android:layout_width="42dp"
                                 android:layout_height="42dp"
                                 android:layout_alignParentEnd="true"
+                                android:scaleType="fitXY"
                                 android:src="@drawable/ic_outline_pending_actions_24" />
 
                         </RelativeLayout>
@@ -253,7 +254,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="end"
-                                android:text="Ordered date"
+                                android:text="Order Time"
                                 android:textSize="14sp" />
 
                             <TextView
@@ -305,7 +306,7 @@
                     </LinearLayout>
 
                     <Button
-                        android:id="@+id/btnPlaceOrder"
+                        android:id="@+id/cancelOrderBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:background="@drawable/custom_button_cart"

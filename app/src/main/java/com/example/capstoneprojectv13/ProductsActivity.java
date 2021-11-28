@@ -231,7 +231,7 @@ public class ProductsActivity extends AppCompatActivity {
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
-                                    Toast.makeText(ProductsActivity.this, "Add to Cart Successfully", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ProductsActivity.this, "Added to Cart", Toast.LENGTH_SHORT).show();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -254,7 +254,7 @@ public class ProductsActivity extends AppCompatActivity {
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
-                                    Toast.makeText(ProductsActivity.this, "Add to Cart Successfully", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ProductsActivity.this, "Added to Cart", Toast.LENGTH_SHORT).show();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                         @Override

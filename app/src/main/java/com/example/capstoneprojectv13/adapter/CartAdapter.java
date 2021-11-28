@@ -5,17 +5,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
 
 import com.bumptech.glide.Glide;
 import com.example.capstoneprojectv13.R;
 import com.example.capstoneprojectv13.model.CartModel;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +36,9 @@ public class CartAdapter extends FirebaseRecyclerAdapter<CartModel,CartAdapter.m
      *
      * @param options
      */
+
     Context context;
+    double a = 0;
     public CartAdapter(Context context ,@NonNull FirebaseRecyclerOptions<CartModel> options)
     {
         super(options);
@@ -44,6 +54,16 @@ public class CartAdapter extends FirebaseRecyclerAdapter<CartModel,CartAdapter.m
                 .load(model.getImage())
                 .error(R.drawable.common_google_signin_btn_icon_dark_normal)
                 .into(holder.CartImageIv);
+        holder.HomelLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                FirebaseUser user = mAuth.getCurrentUser();
+                getRef(position).removeValue();
+                notifyItemRemoved(position);
+                return false;
+            }
+        });
     }
 
     @NonNull
@@ -56,7 +76,7 @@ public class CartAdapter extends FirebaseRecyclerAdapter<CartModel,CartAdapter.m
     public class myViewHolder extends  RecyclerView.ViewHolder{
 
         ImageView CartImageIv;
-
+        LinearLayout HomelLayout;
         TextView CartQuantityTv, CartPriceTv, CartNameTv;
 
         public myViewHolder(@NonNull View itemView) {
@@ -65,16 +85,18 @@ public class CartAdapter extends FirebaseRecyclerAdapter<CartModel,CartAdapter.m
             CartNameTv = itemView.findViewById(R.id.CartNameTv);
             CartPriceTv = itemView.findViewById(R.id.CartPriceTv);
             CartQuantityTv = itemView.findViewById(R.id.CartQuantityTv);
+            HomelLayout = itemView.findViewById(R.id.HomelLayout);
         }
     }
 
-    public int grandTotal(List<CartModel> items){
-
-        int totalPrice = 0;
-        for(int i = 0 ; i < items.size(); i++) {
-            totalPrice += items.get(i).getTotalPrice();
-        }
-
-        return totalPrice;
+    @Override
+    public void startListening() {
+        super.startListening();
     }
+
+    @Override
+    public void stopListening() {
+        super.stopListening();
+    }
+
 }

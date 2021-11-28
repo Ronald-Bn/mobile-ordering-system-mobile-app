@@ -1,15 +1,19 @@
 package com.example.capstoneprojectv13;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -36,6 +40,15 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 
 import org.w3c.dom.Text;
 
@@ -49,10 +62,11 @@ import java.util.Map;
 public class PaymentActivity extends AppCompatActivity implements View.OnClickListener{
 
     private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, TvPhone, TvName;
-    private Button btnPlaceOrder;
+    private Button btnPlaceOrder, uploadPhotoBtn;
     private String ordersId;
     private int sum = 0;
     private FirebaseFirestore fStore;
+    private FirebaseStorage mStorage;
     private FirebaseAuth mAuth;
     private DatabaseReference databaseReference;
     private RecyclerView recyclerView;
@@ -61,6 +75,8 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     private RadioButton cashPaymentBtn, gCashPaymentBtn;
     private LinearLayout linearLayout,linearLayout2 ;
     private EditText referenceNoEt;
+
+    private Uri imageUrl = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +97,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         TvTotalPayment = findViewById(R.id.TvTotalTv);
         cashPaymentBtn = findViewById(R.id.radio_one);
         gCashPaymentBtn = findViewById(R.id.radio_two);
+        uploadPhotoBtn = findViewById(R.id.uploadPhotoBtn);
         btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
         OrderDateTv = findViewById(R.id.orderDateTv);
         OrderIdTv = findViewById(R.id.orderIdTv);
@@ -91,12 +108,16 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         String cartId = getIntent().getStringExtra("cartId");
         ordersId = getIntent().getStringExtra("ordersId");
 
+        Toast.makeText(this, cartId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, ordersId, Toast.LENGTH_SHORT).show();
         linearLayout = findViewById(R.id.PaymentLayout);
         linearLayout2 = findViewById(R.id.PaymentLayout2);
         linearLayout.setVisibility(View.VISIBLE);
+        linearLayout2.setVisibility(View.GONE);
         btnPlaceOrder.setText("Pay");
 
         fStore = FirebaseFirestore.getInstance();
+        mStorage = FirebaseStorage.getInstance();
         FirebaseUser user = mAuth.getInstance().getCurrentUser();
 
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
@@ -105,9 +126,11 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
         FirebaseRecyclerOptions<CartModel> options =
                 new FirebaseRecyclerOptions.Builder<CartModel>()
-                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Cart")
-                                .child(user.getUid()).orderByChild("cartId").equalTo(cartId), CartModel.class)
-                        .build();
+                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                .getReference("Cart_List")
+                                .child(user.getUid())
+                                .child(cartId), CartModel.class)
+                                .build();
 
         cartAdapter = new CartAdapter(this, options);
         recyclerView.setAdapter(cartAdapter);
@@ -129,9 +152,10 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         });
 
         databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference("Cart")
-                .child(user.getUid());
-        databaseReference.orderByChild("cartId").equalTo(cartId).addValueEventListener(new ValueEventListener() {
+                .getReference("Cart_List")
+                .child(user.getUid())
+                .child(cartId);
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -186,6 +210,32 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 Toast.makeText(PaymentActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        uploadPhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dexter.withActivity(PaymentActivity.this)
+                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .withListener(new PermissionListener() {
+                            @Override
+                            public void onPermissionGranted(PermissionGrantedResponse response) {
+                                Intent intent = new Intent(Intent.ACTION_PICK);
+                                intent.setType("image/*");
+                                startActivityForResult(Intent.createChooser(intent, "Browse"), 1);
+                            }
+
+                            @Override
+                            public void onPermissionDenied(PermissionDeniedResponse response) {
+
+                            }
+
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                                token.continuePermissionRequest();
+                            }
+                        }).check();
+            }
+        });
     }
 
     @Override
@@ -196,13 +246,14 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             }else if(gCashPaymentBtn.isChecked()){
                 gCashPayment();
             }else{
-                Toast.makeText(this, "Select payment method", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Choose payment method", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void cashPayment(){
-        mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser user = mAuth.getInstance().getCurrentUser();
         DatabaseReference rootRef = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
                 .child("Orders").child(ordersId);
 
@@ -215,15 +266,16 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
                     updateData.put("payment", "Cash on delivery");
                     updateData.put("status", "shipping");
-                    updateData.put("amount", "0");
+                    updateData.put("status_userid",  "shipping_" + user.getUid());
+                    updateData.put("receipt", "https://firebasestorage.googleapis.com/v0/b/capstone-project-v-1-3.appspot.com/o/image%2Fno_photo_uploaded.png?alt=media&token=3dff5f60-6a6d-4f6c-a600-00aa5d4a79ac");
                     updateData.put("paymentdate", dateAndTime());
-
+                    updateData.put("refno","0");
 
                             rootRef.updateChildren(updateData)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
-                                    Toast.makeText(PaymentActivity.this, "Add to Cart Successfully", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(PaymentActivity.this, "Payment Success", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(PaymentActivity.this,MainActivity.class);
                                     startActivity(intent);
                                     finish();
@@ -246,9 +298,60 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
     }
     private void gCashPayment(){
-            if(TextUtils.isEmpty(referenceNoEt.getText().toString())){
-            Toast.makeText(this, "Enter the reference number", Toast.LENGTH_SHORT).show();
-        }else{
+            FirebaseUser user = mAuth.getInstance().getCurrentUser();
+            if(imageUrl != null && TextUtils.isEmpty(referenceNoEt.getText().toString())){
+                StorageReference ref = mStorage.getReference().child("image").child(imageUrl.getLastPathSegment());
+                ref.putFile(imageUrl).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Task<Uri> downloadUrl = taskSnapshot.getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if(task.isSuccessful()) {
+
+                                    DatabaseReference rootRef = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
+                                            .child("Orders").child(ordersId);
+
+                                    rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            Map<String,Object> updateData = new HashMap<>();
+                                            updateData.put("payment","Gcash");
+                                            updateData.put("status","shipping");
+                                            updateData.put("status_userid", "shipping_" + user.getUid());
+                                            updateData.put("receipt",task.getResult().toString());
+                                            updateData.put("refno", "0");
+                                            updateData.put("paymentdate", dateAndTime());
+
+                                            rootRef.updateChildren(updateData).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    Toast.makeText(PaymentActivity.this, "Payment Success", Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(PaymentActivity.this,MainActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(PaymentActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Toast.makeText(PaymentActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+           }else if(imageUrl == null && TextUtils.isEmpty(referenceNoEt.getText().toString())){
+            Toast.makeText(this, "Enter Reference Number", Toast.LENGTH_SHORT).show();
+            }else{
             DatabaseReference rootRef = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
                     .child("Orders").child(ordersId);
 
@@ -259,6 +362,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         Map<String,Object> updateData = new HashMap<>();
                         updateData.put("payment","Gcash");
                         updateData.put("status","shipping");
+                        updateData.put("receipt","https://firebasestorage.googleapis.com/v0/b/capstone-project-v-1-3.appspot.com/o/image%2Fno_photo_uploaded.png?alt=media&token=3dff5f60-6a6d-4f6c-a600-00aa5d4a79ac");
                         updateData.put("refno", referenceNoEt.getText().toString().trim());
                         updateData.put("paymentdate", dateAndTime());
 
@@ -266,7 +370,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
-                                        Toast.makeText(PaymentActivity.this, "Add to Cart Successfully", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(PaymentActivity.this, "Payment Success", Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(PaymentActivity.this,MainActivity.class);
                                         startActivity(intent);
                                         finish();
@@ -279,7 +383,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         });
                     }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
                     Toast.makeText(PaymentActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -322,7 +425,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         cartAdapter.startListening();
     }
 
-    @Override
+       @Override
     public void onResume() {
         super.onResume();
         recyclerView.getLayoutManager().onRestoreInstanceState(state);
@@ -332,6 +435,18 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     public void onPause() {
         super.onPause();
         state = recyclerView.getLayoutManager().onSaveInstanceState();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            imageUrl=data.getData();
+            Toast.makeText(this, "Upload Success", Toast.LENGTH_SHORT).show();
+            referenceNoEt.setEnabled(false);
+            referenceNoEt.setInputType(InputType.TYPE_NULL);
+        }
     }
 
     private static String replaceAll(String string){

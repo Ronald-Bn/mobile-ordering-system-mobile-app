@@ -6,11 +6,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.app.Dialog;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +26,8 @@ import com.example.capstoneprojectv13.adapter.CartAdapter;
 import com.example.capstoneprojectv13.model.CartModel;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,13 +39,19 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
 public class PendingActivity extends AppCompatActivity {
 
     private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip , OrderDateTv, OrderIdTv, TvPhone, TvName;
-    private Button btnPlaceOrder;
+    private Button cancelOrderBtn;
     private String uid;
     private String ordersId;
     private int sum = 0;
@@ -45,6 +61,8 @@ public class PendingActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CartAdapter cartAdapter;
     private Parcelable state;
+    private Dialog dialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,17 +84,18 @@ public class PendingActivity extends AppCompatActivity {
         TvTotalPayment = findViewById(R.id.TvTotalTv);
         OrderDateTv = findViewById(R.id.orderDateTv);
         OrderIdTv = findViewById(R.id.orderIdTv);
-        btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
+        cancelOrderBtn = findViewById(R.id.cancelOrderBtn);
+        cancelOrderBtn.setOnClickListener(v -> {
+            showCancelDialog();
+            dialog.show();
+        });
 
         String cartId = getIntent().getStringExtra("cartId");
         ordersId = getIntent().getStringExtra("ordersId");
 
-        btnPlaceOrder.setText("Cancel Order");
-
         mAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
-        uid = user.getUid();
 
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -84,14 +103,15 @@ public class PendingActivity extends AppCompatActivity {
 
         FirebaseRecyclerOptions<CartModel> options =
                 new FirebaseRecyclerOptions.Builder<CartModel>()
-                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Cart")
-                                .child(user.getUid()).orderByChild("cartId").equalTo(cartId), CartModel.class)
+                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Cart_List")
+                                .child(user.getUid())
+                                .child(cartId), CartModel.class)
                         .build();
 
         cartAdapter = new CartAdapter(this, options);
         recyclerView.setAdapter(cartAdapter);
 
-        DocumentReference documentReference = fStore.collection("Users").document(uid);
+        DocumentReference documentReference = fStore.collection("Users").document(user.getUid());
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -130,9 +150,10 @@ public class PendingActivity extends AppCompatActivity {
         });
 
         databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference("Cart")
-                .child(user.getUid());
-        databaseReference.orderByChild("cartId").equalTo(cartId).addValueEventListener(new ValueEventListener() {
+                .getReference("Cart_List")
+                .child(user.getUid())
+                .child(cartId);
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -155,6 +176,80 @@ public class PendingActivity extends AppCompatActivity {
         });
     }
 
+
+    private void showCancelDialog(){
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.order_cancel_dialog);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false); //Optional
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation; //Setting the animations to dialog
+
+        Button submitBtn = dialog.findViewById(R.id.submitBtn);
+        RadioGroup radioGroup = dialog.findViewById(R.id.radioGroup);
+        submitBtn.setOnClickListener(v -> {
+            int selectId = radioGroup.getCheckedRadioButtonId();
+            RadioButton radioButton;
+            radioButton = dialog.findViewById(selectId);
+            if(radioButton != null){
+                FirebaseUser user = mAuth.getInstance().getCurrentUser();
+                databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                        .getReference("Orders")
+                        .child(ordersId);
+
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists()){
+                            Map<String, Object> updateData = new HashMap<>();
+                            updateData.put("cancelledby", "User");
+                            updateData.put("remarks", radioButton.getText().toString().trim());
+                            updateData.put("rejectdate", dateAndTime());
+                            updateData.put("status", "rejected");
+                            updateData.put("status_userid" , "reject_" + user.getUid());
+
+                            databaseReference.updateChildren(updateData).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    dialog.dismiss();
+                                    Toast.makeText(PendingActivity.this, "Thank for your response", Toast.LENGTH_SHORT).show();
+                                    onBackPressed();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(PendingActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            }
+                        }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(PendingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }else{
+                Toast.makeText(this, "Choose a reason", Toast.LENGTH_SHORT).show();
+            }
+        });
+        ImageView cancelIv = dialog.findViewById(R.id.cancelIv);
+        cancelIv.setOnClickListener(v->{
+            dialog.cancel();
+        });
+    }
+
+
+    private String dateAndTime(){
+        // Current Date and Time
+        Date dateAndTime = Calendar.getInstance().getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String currentDate = dateFormat.format(dateAndTime);
+        String currentTime = timeFormat.format(dateAndTime);
+
+        return new StringBuilder().append(currentDate).append(" ").append(currentTime).toString();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -172,9 +267,5 @@ public class PendingActivity extends AppCompatActivity {
         super.onPause();
         state = recyclerView.getLayoutManager().onSaveInstanceState();
     }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
 }
+

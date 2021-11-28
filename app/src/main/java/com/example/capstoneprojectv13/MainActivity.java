@@ -3,48 +3,42 @@ package com.example.capstoneprojectv13;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
+
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.RadioButton;
-import android.widget.TextView;
 
 import com.example.capstoneprojectv13.adapter.MainProductsAdapter;
 import com.example.capstoneprojectv13.fragment.FragmentCart;
 import com.example.capstoneprojectv13.fragment.FragmentHome;
+import com.example.capstoneprojectv13.fragment.FragmentNotifications;
 import com.example.capstoneprojectv13.fragment.FragmentOrder;
-import com.example.capstoneprojectv13.fragment.FragmentPayment;
 import com.example.capstoneprojectv13.fragment.FragmentProfile;
 import com.example.capstoneprojectv13.model.Products;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+
 
 public class MainActivity extends AppCompatActivity {
 
     MainProductsAdapter mainProductsAdapter;
-    private EditText search;
     private BottomNavigationView btnViewid;
 
 
-    @SuppressLint("SetTextI18n")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        startService(new Intent(this, NotificationService.class));
+
+
         loadFragment(new FragmentHome());
-        search = findViewById(R.id.search_field);
         btnViewid = findViewById(R.id.bottom_navigation_view);
         FrameLayout frameLayout = findViewById(R.id.frameLayout);
 
@@ -99,5 +93,11 @@ public class MainActivity extends AppCompatActivity {
 
         mainProductsAdapter = new MainProductsAdapter(this, options);
         mainProductsAdapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        startService(new Intent(this, NotificationService.class));
     }
 }

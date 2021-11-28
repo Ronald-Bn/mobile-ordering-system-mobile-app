@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".CheckOutActivity">
+
+    <include
+        android:id="@+id/toolbar_order_details"
+        layout="@layout/toolbar_order_details" />
+
 
     <ScrollView
         android:layout_width="match_parent"
@@ -71,8 +77,7 @@
                 android:layout_marginEnd="20dp"
                 android:text="Name"
                 android:textAllCaps="false"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/TvPhone"
@@ -82,8 +87,7 @@
                 android:layout_marginEnd="20dp"
                 android:text="Phone number"
                 android:textAllCaps="false"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/TvAddress"
@@ -93,8 +97,7 @@
                 android:layout_marginEnd="20dp"
                 android:text="Delivery Address"
                 android:textAllCaps="false"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/TvZipcode"
@@ -104,8 +107,7 @@
                 android:layout_marginBottom="10dp"
                 android:text="1421"
                 android:textAllCaps="false"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textSize="14sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -251,7 +253,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:layout_marginEnd="20dp"
-                        android:text="Shipping Fee"
+                        android:text="Shipping"
                         android:textColor="@color/black"
                         android:textSize="14sp" />
 
@@ -372,7 +374,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:text="Ordered date"
+                        android:text="Order Time"
                         android:textSize="14sp" />
 
                     <TextView
@@ -394,7 +396,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:text="Rejected date"
+                        android:text="Rejected Time"
                         android:textSize="14sp" />
 
                     <TextView
@@ -425,6 +427,23 @@
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:layout_marginBottom="10dp" >
+
+                <TextView
+                    android:id="@+id/cancelledbyTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:text="Remarks"
+                    android:textSize="14sp" />
+
+                </RelativeLayout>
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -444,4 +463,4 @@
         </LinearLayout>
     </ScrollView>
 
-</RelativeLayout>
+</LinearLayout>

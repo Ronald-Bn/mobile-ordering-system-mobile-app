@@ -39,13 +39,13 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/warning"
+                android:background="@color/yellow"
                 android:padding="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select payment method to ."
+                    android:text="Waiting for Seller to package \nand ship your order(s)"
                     android:textColor="@color/white"
                     android:textSize="14sp" />
 
@@ -53,7 +53,8 @@
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:layout_alignParentEnd="true"
-                    android:src="@drawable/ic_baseline_payment_24" />
+                    android:padding="4dp"
+                    android:src="@drawable/ic_waiting_package" />
 
             </RelativeLayout>
 
@@ -161,7 +162,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Payment method"
+                    android:text="Payment Method"
                     android:textAllCaps="false"
                     android:textColor="@color/black"
                     android:textSize="14sp"
@@ -180,8 +181,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:text="Cash on Delivery"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textSize="14sp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -228,33 +228,6 @@
                                 android:text="40"
                                 android:textColor="@color/black"
                                 android:textSize="14sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:layout_gravity="end"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end"
-                                android:layout_marginEnd="20dp"
-                                android:text="Amount:"
-                                android:textColor="@color/black"
-                                android:textSize="14sp" />
-
-                            <TextView
-                                android:id="@+id/amountTv"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end"
-                                android:text="40"
-                                android:textColor="@color/black"
-                                android:textSize="14sp"
-                                app:drawableStartCompat="@drawable/layer_icon_red" />
                         </LinearLayout>
                     </LinearLayout>
                 </RelativeLayout>
@@ -376,7 +349,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:text="Order Date "
+                        android:text="Order Time "
                         android:textSize="14sp" />
 
                     <TextView
@@ -397,7 +370,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:text="Confirm Date  "
+                        android:text="Approve Time  "
                         android:textSize="14sp" />
 
                     <TextView
@@ -418,7 +391,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:text="Payment Date "
+                        android:text="Payment Time "
                         android:textSize="14sp" />
 
                     <TextView
@@ -433,11 +406,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:orientation="vertical"
-        android:layout_alignParentBottom="true">
 
     <LinearLayout
         android:id="@+id/bottom_panel"
@@ -486,6 +454,5 @@
             app:backgroundTint="@color/reddish" />
 
         </LinearLayout>
-    </LinearLayout>
-        </RelativeLayout>
+    </RelativeLayout>
 </LinearLayout>

@@ -11,6 +11,7 @@
     tools:context=".LoginActivity">
 
     <TextView
+        android:layout_marginTop="100dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -19,8 +20,16 @@
         android:textColor="@color/white"
         android:text="@string/welcome_to_chasy_products" />
 
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="150dp" />
+
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:id="@+id/emailMtt"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -43,6 +52,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:id="@+id/passwordMtt"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -97,6 +107,7 @@
         app:backgroundTint="@color/white"/>
 
     <TextView
+        android:id="@+id/registerTv"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"

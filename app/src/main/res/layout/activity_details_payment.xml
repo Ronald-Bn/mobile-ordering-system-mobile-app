@@ -45,7 +45,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Select payment method to ."
+                        android:text="Select payment method to process \n your order(s)"
                         android:textSize="14sp"
                         android:textColor="@color/white"/>
 
@@ -53,7 +53,7 @@
                         android:layout_width="42dp"
                         android:layout_height="42dp"
                         android:layout_alignParentEnd="true"
-                        android:src="@drawable/ic_baseline_payment_24" />
+                        android:src="@drawable/ic_baseline_payments_24" />
 
                 </RelativeLayout>
 
@@ -160,7 +160,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Select payment method"
+                        android:text="Select Payment Method"
                         android:textAllCaps="false"
                         android:textColor="@color/black"
                         android:textSize="14sp"
@@ -177,7 +177,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:minHeight="0dp"
-                            android:text="Cash on delivery"
+                            android:text="Cash on Delivery"
                             android:textSize="14sp"
                             android:onClick="onRadioButtonClicked"
                             tools:ignore="OnClick" />
@@ -233,18 +233,19 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <Button
-                        android:id="@+id/Btn_SignIn"
+                        android:id="@+id/uploadPhotoBtn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginBottom="10dp"
-                        android:background="@drawable/custom_button"
-                        android:text="@string/sign_in"
-                        android:textColor="@color/black"
+                        android:background="@drawable/custom_button_rounded"
+                        android:text="Upload Photo"
+                        android:textColor="@color/white"
                         android:textAllCaps="false"
                         android:foreground="?attr/selectableItemBackgroundBorderless"
+                        app:backgroundTint="@color/reddish"
                         />
 
 
@@ -365,7 +366,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
-                            android:text="Order Date"
+                            android:text="Order Time"
                             android:textSize="14sp" />
 
                         <TextView
@@ -385,7 +386,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:text="Confirm Date"
+                        android:text="Approve Time"
                         android:textSize="14sp" />
 
                     <TextView

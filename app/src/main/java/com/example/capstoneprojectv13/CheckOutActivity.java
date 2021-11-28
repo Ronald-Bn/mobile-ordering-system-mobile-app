@@ -188,17 +188,19 @@ public class CheckOutActivity extends AppCompatActivity {
 
     private void addToOrders () {
         FirebaseUser user = mAuth.getInstance().getCurrentUser();
+
         databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference("Orders");
+                .getReference()
+                .child("Orders");
 
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-
+                String key = databaseReference.push().getKey();
                 Map<String,Object> updateData = new HashMap<>();
                 updateData.put("userid", user.getUid());
-                updateData.put("key", snapshot.getRef().getKey());
+                updateData.put("key", key);
                 updateData.put("cartId",String.valueOf(generateCartId));
                 updateData.put("name", TvName.getText().toString());
                 updateData.put("phone", TvPhone.getText().toString());
@@ -206,10 +208,10 @@ public class CheckOutActivity extends AppCompatActivity {
                 updateData.put("zipcode", TvZipCode.getText().toString());
                 updateData.put("date", dateAndTime());
                 updateData.put("status", "pending");
+                updateData.put("status_userid", "pending_" + user.getUid());
                 updateData.put("totalpayment", TvTotalPayment.getText().toString());
 
-                databaseReference.push()
-                        .setValue(updateData)
+                databaseReference.child(key).setValue(updateData)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {

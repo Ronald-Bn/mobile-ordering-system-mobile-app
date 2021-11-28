@@ -3,6 +3,7 @@ package com.example.capstoneprojectv13;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,10 +35,7 @@ import java.util.Map;
 
 public class CancelledActivity extends AppCompatActivity {
 
-    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip , OrderDateTv, OrderIdTv, rejectDate, remarksTv, TvPhone, TvName;
-    private Button btnPlaceOrder;
-    private String uid;
-    private String ordersId;
+    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip , OrderDateTv, OrderIdTv, rejectDate, remarksTv, TvPhone, TvName, cancelledbyTv;
     private int sum = 0;
     private FirebaseFirestore fStore;
     private FirebaseAuth mAuth;
@@ -45,15 +43,19 @@ public class CancelledActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CartAdapter cartAdapter;
     private Parcelable state;
-    private LinearLayout linearLayout,linearLayout2;
+    private LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_cancelled);
+
+        Toolbar mToolbar = findViewById(R.id.toolbar_order_details);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.action_bar_orders_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setTitle("");
+        mToolbar.setNavigationOnClickListener(view -> onBackPressed());
 
         TvName = findViewById(R.id.TvName);
         TvPhone = findViewById(R.id.TvPhone);
@@ -64,21 +66,18 @@ public class CancelledActivity extends AppCompatActivity {
         TvTotalPayment = findViewById(R.id.TvTotalTv);
         OrderDateTv = findViewById(R.id.orderDateTv);
         OrderIdTv = findViewById(R.id.orderIdTv);
-        btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
         rejectDate = findViewById(R.id.rejectDate);
         remarksTv = findViewById(R.id.remarksTv);
+        cancelledbyTv = findViewById(R.id.cancelledbyTv);
 
         String cartId = getIntent().getStringExtra("cartId");
-        ordersId = getIntent().getStringExtra("ordersId");
 
         linearLayout = findViewById(R.id.PaymentLayout);
-        linearLayout2 = findViewById(R.id.PaymentLayout2);
         linearLayout.setVisibility(View.GONE);
 
         mAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
-        uid = user.getUid();
 
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -86,14 +85,16 @@ public class CancelledActivity extends AppCompatActivity {
 
         FirebaseRecyclerOptions<CartModel> options =
                 new FirebaseRecyclerOptions.Builder<CartModel>()
-                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Cart")
-                                .child(user.getUid()).orderByChild("cartId").equalTo(cartId), CartModel.class)
-                        .build();
+                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                .getReference("Cart_List")
+                                .child(user.getUid())
+                                .child(cartId), CartModel.class)
+                                .build();
 
         cartAdapter = new CartAdapter(this, options);
         recyclerView.setAdapter(cartAdapter);
 
-        DocumentReference documentReference = fStore.collection("Users").document(uid);
+        DocumentReference documentReference = fStore.collection("Users").document(user.getUid());
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -121,11 +122,13 @@ public class CancelledActivity extends AppCompatActivity {
                     Object orderId = map.get("cartId");
                     Object rejectdate = map.get("rejectdate");
                     Object remarkstv = map.get("remarks");
+                    Object cancelledby = map.get("cancelledby");
 
                     OrderDateTv.setText(String.valueOf(orderDate));
                     OrderIdTv.setText(String.valueOf(orderId));
                     rejectDate.setText(String.valueOf(rejectdate));
                     remarksTv.setText(String.valueOf(remarkstv));
+                    cancelledbyTv.setText("Cancelled by " + cancelledby);
                 }
             }
 
@@ -136,9 +139,10 @@ public class CancelledActivity extends AppCompatActivity {
         });
 
         databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference("Cart")
-                .child(user.getUid());
-        databaseReference.orderByChild("cartId").equalTo(cartId).addValueEventListener(new ValueEventListener() {
+                .getReference("Cart_List")
+                .child(user.getUid())
+                .child(cartId);
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 

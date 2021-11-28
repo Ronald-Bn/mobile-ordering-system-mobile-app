@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,9 +30,10 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseFirestore fStore;
 
     final String TAG = "LoginActivity";
-    private TextView btn_ForgetPassword;
+    private TextView btn_ForgetPassword,registerTv;
     private EditText etEmail, etPassword;
     private Button btn_Register, btn_Login;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +54,30 @@ public class LoginActivity extends AppCompatActivity {
         btn_Login =findViewById(R.id.Btn_SignIn);
         btn_Register = findViewById(R.id.Btn_MainRegister);
         btn_ForgetPassword = findViewById(R.id.ForgetPassword);
+        registerTv = findViewById(R.id.registerTv);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
         btn_Login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!etEmail.getText().toString().equals("") && !etPassword.getText().toString().equals("")){
-                    login(etEmail.getText().toString(),etPassword.getText().toString() );
+                    progressBar.setVisibility(View.VISIBLE);
+                    etEmail.setVisibility(View.GONE);
+                    etPassword.setVisibility(View.GONE);
+                    btn_Login.setVisibility(View.GONE);
+                    btn_Register.setVisibility(View.GONE);
+                    btn_ForgetPassword.setVisibility(View.GONE);
+                    registerTv.setVisibility(View.GONE);
+                    login(etEmail.getText().toString(),etPassword.getText().toString());
                 }else{
+                    progressBar.setVisibility(View.GONE);
+                    etEmail.setVisibility(View.VISIBLE);
+                    etPassword.setVisibility(View.VISIBLE);
+                    btn_Login.setVisibility(View.VISIBLE);
+                    btn_Register.setVisibility(View.VISIBLE);
+                    btn_ForgetPassword.setVisibility(View.VISIBLE);
+                    registerTv.setVisibility(View.VISIBLE);
                     Toast.makeText(LoginActivity.this, "Field can not be empty!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -83,13 +102,20 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
-                Toast.makeText(LoginActivity.this, "Login Successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Login Success", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getApplicationContext(),MainActivity.class));
                 finish();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                progressBar.setVisibility(View.GONE);
+                etEmail.setVisibility(View.VISIBLE);
+                etPassword.setVisibility(View.VISIBLE);
+                btn_Login.setVisibility(View.VISIBLE);
+                btn_Register.setVisibility(View.VISIBLE);
+                btn_ForgetPassword.setVisibility(View.VISIBLE);
+                registerTv.setVisibility(View.VISIBLE);
                 Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -114,6 +140,13 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            etEmail.setVisibility(View.GONE);
+            etPassword.setVisibility(View.GONE);
+            btn_Login.setVisibility(View.GONE);
+            btn_Register.setVisibility(View.GONE);
+            btn_ForgetPassword.setVisibility(View.GONE);
+            registerTv.setVisibility(View.GONE);
             Toast.makeText(this, "You're already login. Please wait !", Toast.LENGTH_SHORT).show();
             DocumentReference df = FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
             df.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

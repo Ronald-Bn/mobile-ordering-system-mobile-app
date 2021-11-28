@@ -38,7 +38,7 @@ import java.util.Map;
 
 public class ShippingActivity extends AppCompatActivity {
 
-    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, gCashPaymentRefNo, amountTv, TvPhone, TvName;
+    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, gCashPaymentRefNo, TvPhone, TvName;
     private Button btnPlaceOrder;
     private String ordersId;
     private int sum = 0;
@@ -80,7 +80,6 @@ public class ShippingActivity extends AppCompatActivity {
         cashPaymentRL = findViewById(R.id.cashPaymentRL);
         gCashPaymentRL = findViewById(R.id.gCashPaymentRL);
         gCashPaymentRefNo = findViewById(R.id.gCashPaymentRefNo);
-        amountTv = findViewById(R.id.amountTv);
 
 
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
@@ -90,8 +89,10 @@ public class ShippingActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getInstance().getCurrentUser();
         FirebaseRecyclerOptions<CartModel> options =
                 new FirebaseRecyclerOptions.Builder<CartModel>()
-                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Cart")
-                                .child(user.getUid()).orderByChild("cartId").equalTo(cartId), CartModel.class)
+                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                .getReference("Cart_List")
+                                .child(user.getUid())
+                                .child(cartId), CartModel.class)
                         .build();
 
         cartAdapter = new CartAdapter(this, options);
@@ -115,9 +116,10 @@ public class ShippingActivity extends AppCompatActivity {
         });
 
         databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference("Cart")
-                .child(user.getUid());
-        databaseReference.orderByChild("cartId").equalTo(cartId).addValueEventListener(new ValueEventListener() {
+                .getReference("Cart_List")
+                .child(user.getUid())
+                .child(cartId);
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -153,12 +155,10 @@ public class ShippingActivity extends AppCompatActivity {
                     Object paymentdate = map.get("paymentdate");
                     Object refno = map.get("refno");
                     Object payment = map.get("payment");
-                    Object amount = map.get("amount");
 
                     if(String.valueOf(payment).equals("Gcash")){
                         gCashPaymentRL.setVisibility(View.VISIBLE);
                         gCashPaymentRefNo.setText(String.valueOf(refno));
-                        amountTv.setText(String.valueOf(amount));
                     }else{
                         cashPaymentRL.setVisibility(View.VISIBLE);
                     }

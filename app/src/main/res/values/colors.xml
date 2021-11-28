@@ -23,5 +23,6 @@
     <color name="danger">#d9534f</color>
     <color name="inverse">#292b2c</color>
     <color name="faded">#f7f7f7</color>
+    <color name="text_default">#808080</color>
 
 </resources>

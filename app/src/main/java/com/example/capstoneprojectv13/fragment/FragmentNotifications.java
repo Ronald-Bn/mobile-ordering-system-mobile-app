@@ -1,4 +1,4 @@
-package com.example.capstoneprojectv13;
+package com.example.capstoneprojectv13.fragment;
 
 import android.os.Bundle;
 
@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.capstoneprojectv13.R;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,6 +61,10 @@ public class FragmentNotifications extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notifications, container, false);
+        View view = inflater.inflate(R.layout.fragment_notifications, container, false);
+
+
+
+        return view;
     }
 }

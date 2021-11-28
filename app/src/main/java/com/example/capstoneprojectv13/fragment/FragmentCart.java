@@ -8,17 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.capstoneprojectv13.CheckOutActivity;
 import com.example.capstoneprojectv13.R;
 import com.example.capstoneprojectv13.adapter.CartAdapter;
-import com.example.capstoneprojectv13.listener.ICartLoadListener;
 import com.example.capstoneprojectv13.model.CartModel;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,7 +35,7 @@ import java.util.Map;
  * Use the {@link FragmentCart#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentCart extends Fragment implements ICartLoadListener {
+public class FragmentCart extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -110,6 +108,7 @@ public class FragmentCart extends Fragment implements ICartLoadListener {
         cartAdapter = new CartAdapter(view.getContext(),options);
         recyclerView.setAdapter(cartAdapter);
 
+
         databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
                 .getReference("Cart")
                 .child(user.getUid());
@@ -117,7 +116,6 @@ public class FragmentCart extends Fragment implements ICartLoadListener {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int sum = 0;
-
                 for(DataSnapshot ds : snapshot.getChildren())
                 {
                     Map<String,Object> map = (Map<String, Object>) ds.getValue();
@@ -147,12 +145,6 @@ public class FragmentCart extends Fragment implements ICartLoadListener {
         return view;
     }
 
-
-    @Override
-    public void onCartLoadSuccess(List<CartModel> cartModelList) {
-
-    }
-
     @Override
     public void onPause() {
         super.onPause();
@@ -177,8 +169,4 @@ public class FragmentCart extends Fragment implements ICartLoadListener {
         cartAdapter.stopListening();
     }
 
-    @Override
-    public void onCartLoadFailed(String message) {
-
-    }
 }

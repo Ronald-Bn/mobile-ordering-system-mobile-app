@@ -36,12 +36,13 @@ public class OrdersShippingAdapter extends FirebaseRecyclerAdapter<OrdersModel, 
 
     @Override
     protected void onBindViewHolder(@NonNull OrdersShippingAdapter.myViewHolder holder, int position, @NonNull OrdersModel model) {
-        holder.OrdersBtn.setEnabled(false);
+
         holder.OrdersBtn.setText("Shipping");
         holder.OrdersNameTv.setText(model.getCartId());
         holder.OrdersDateTv.setText(model.getDate());
         holder.OrdersAddressTv.setText(model.getAddress());
         holder.OrdersZipcodeTv.setText(model.getZipcode());
+        holder.OrdersBtn.setEnabled(false);
         holder.OrdersLLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.capstoneprojectv13.LoginActivity;
+import com.example.capstoneprojectv13.NotificationService;
 import com.example.capstoneprojectv13.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -84,6 +85,8 @@ public class FragmentProfile extends Fragment {
         btnChangeProfile = view.findViewById(R.id.changeProfileDilaogBtn);
         btnChangePassword = view.findViewById(R.id.changePasswordDialaogBtn);
         btnSignOut.setOnClickListener(v -> {
+            //Bug
+            view.getContext().stopService(new Intent(view.getContext(), NotificationService.class));
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(getActivity(), LoginActivity.class));
             getActivity().finish();
