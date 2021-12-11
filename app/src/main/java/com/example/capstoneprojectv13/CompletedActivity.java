@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,8 +35,7 @@ import java.util.Map;
 
 public class CompletedActivity extends AppCompatActivity {
 
-    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, shipDate, receiveDate, gCashPaymentRefNo, amountTv;
-    private Button btnPlaceOrder;
+    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, shipDate, receiveDate, gCashPaymentRefNo, TvPhone, TvName;
     private String ordersId;
     private int sum = 0;
     private FirebaseFirestore fStore;
@@ -50,19 +50,23 @@ public class CompletedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_completed);
+        Toolbar mToolbar = findViewById(R.id.toolbar_order_details);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.action_bar_orders_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setTitle("");
+        mToolbar.setNavigationOnClickListener(view -> onBackPressed());
 
         String cartId = getIntent().getStringExtra("cartId");
         ordersId = getIntent().getStringExtra("ordersId");
 
+        TvName = findViewById(R.id.TvName);
+        TvPhone = findViewById(R.id.TvPhone);
         TvAddress = findViewById(R.id.TvAddress);
         TvZipCode = findViewById(R.id.TvZipcode);
         TvSubtotal = findViewById(R.id.SubTotalTv);
         TvShip = findViewById(R.id.ShipPriceTv);
         TvTotalPayment = findViewById(R.id.TvTotalTv);
-        btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
         OrderDateTv = findViewById(R.id.orderDateTv);
         OrderIdTv = findViewById(R.id.orderIdTv);
         confirmDate =findViewById(R.id.confirmDate);
@@ -72,7 +76,6 @@ public class CompletedActivity extends AppCompatActivity {
         cashPaymentRL = findViewById(R.id.cashPaymentRL);
         gCashPaymentRL = findViewById(R.id.gCashPaymentRL);
         gCashPaymentRefNo = findViewById(R.id.gCashPaymentRefNo);
-        amountTv = findViewById(R.id.amountTv);
 
 
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
@@ -82,8 +85,10 @@ public class CompletedActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getInstance().getCurrentUser();
         FirebaseRecyclerOptions<CartModel> options =
                 new FirebaseRecyclerOptions.Builder<CartModel>()
-                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Cart")
-                                .child(user.getUid()).orderByChild("cartId").equalTo(cartId), CartModel.class)
+                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                .getReference("Cart_List")
+                                .child(user.getUid())
+                                .child(cartId), CartModel.class)
                         .build();
 
         cartAdapter = new CartAdapter(this, options);
@@ -97,6 +102,8 @@ public class CompletedActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
                     if (documentSnapshot.exists()) {
+                        TvName.setText(documentSnapshot.getString("FullName"));
+                        TvPhone.setText(documentSnapshot.getString("Phone"));
                         TvAddress.setText(documentSnapshot.getString("Address"));
                         TvZipCode.setText(documentSnapshot.getString("Zipcode"));
                     }
@@ -105,9 +112,10 @@ public class CompletedActivity extends AppCompatActivity {
         });
 
         databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference("Cart")
-                .child(user.getUid());
-        databaseReference.orderByChild("cartId").equalTo(cartId).addValueEventListener(new ValueEventListener() {
+                .getReference("Cart_List")
+                .child(user.getUid())
+                .child(cartId);
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -145,12 +153,10 @@ public class CompletedActivity extends AppCompatActivity {
                     Object receivedate = map.get("receivedate");
                     Object refno = map.get("refno");
                     Object payment = map.get("payment");
-                    Object amount = map.get("amount");
 
                     if(String.valueOf(payment).equals("Gcash")){
                         gCashPaymentRL.setVisibility(View.VISIBLE);
                         gCashPaymentRefNo.setText(String.valueOf(refno));
-                        amountTv.setText(String.valueOf(amount));
                     }else{
                         cashPaymentRL.setVisibility(View.VISIBLE);
                     }

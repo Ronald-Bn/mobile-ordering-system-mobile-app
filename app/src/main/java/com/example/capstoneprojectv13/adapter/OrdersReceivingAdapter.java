@@ -1,13 +1,16 @@
 package com.example.capstoneprojectv13.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +21,23 @@ import com.example.capstoneprojectv13.ShippingActivity;
 import com.example.capstoneprojectv13.model.OrdersModel;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 public class OrdersReceivingAdapter extends FirebaseRecyclerAdapter<OrdersModel, OrdersReceivingAdapter.myViewHolder> {
     /**
@@ -28,6 +48,7 @@ public class OrdersReceivingAdapter extends FirebaseRecyclerAdapter<OrdersModel,
      */
 
     private Context context;
+    private FirebaseAuth mAuth;
 
     public OrdersReceivingAdapter(Context context, @NonNull FirebaseRecyclerOptions<OrdersModel> options) {
         super(options);
@@ -36,7 +57,7 @@ public class OrdersReceivingAdapter extends FirebaseRecyclerAdapter<OrdersModel,
 
     @Override
     protected void onBindViewHolder(@NonNull OrdersReceivingAdapter.myViewHolder holder, int position, @NonNull OrdersModel model) {
-        if(model.getZipcode().equals("0")){
+        if(model.getStatus().equals("completed")){
             holder.OrdersBtn.setEnabled(true);
             holder.OrdersBtn.setBackgroundColor(holder.OrdersBtn.getContext().getResources().getColor(R.color.reddish));
         }else{
@@ -54,10 +75,79 @@ public class OrdersReceivingAdapter extends FirebaseRecyclerAdapter<OrdersModel,
                 Intent intent = new Intent(context, ReceivingActivity.class);
                 intent.putExtra("ordersId", getRef(position).getKey());
                 intent.putExtra("cartId", model.getCartId());
+                intent.putExtra("status", model.getStatus());
                 context.startActivity(intent);
             }
         });
+        holder.OrdersBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View view = LayoutInflater.from(v.getRootView().getContext()).inflate(R.layout.order_received_dialog, null);
+                ImageView cancelIv = view.findViewById(R.id.cancelIv);
+                Button cancelBtn = view.findViewById(R.id.cancelBtn);
+                Button confirmBtn = view.findViewById(R.id.confirmBtn);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(view.getRootView().getContext());
+                builder.setView(view);
 
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                cancelIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                cancelBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                confirmBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
+                        DatabaseReference reference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                .getReference("Orders")
+                                .child(getRef(position).getKey());
+
+                        reference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                FirebaseUser user = mAuth.getInstance().getCurrentUser();
+                                    Map<String, Object> updateData = new HashMap<>();
+                                    updateData.put("receivedate",dateAndTime());
+                                    updateData.put("status_userid", "completed_" + user.getUid());
+                                    reference.updateChildren(updateData).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            Toast.makeText(context, "Thank you for buying our product(s)", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+                });
+
+
+            }
+        });
 
     }
 
@@ -67,6 +157,8 @@ public class OrdersReceivingAdapter extends FirebaseRecyclerAdapter<OrdersModel,
         View ordersLayout = LayoutInflater.from(parent.getContext()).inflate(R.layout.users_order,parent,false);
         return new OrdersReceivingAdapter.myViewHolder(ordersLayout);
     }
+
+
 
     public class myViewHolder extends RecyclerView.ViewHolder {
 
@@ -87,4 +179,18 @@ public class OrdersReceivingAdapter extends FirebaseRecyclerAdapter<OrdersModel,
             TvOrderId = itemView.findViewById(R.id.TvOrderId);
         }
     }
+
+
+    private String dateAndTime(){
+        // Current Date and Time
+        Date dateAndTime = Calendar.getInstance().getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String currentDate = dateFormat.format(dateAndTime);
+        String currentTime = timeFormat.format(dateAndTime);
+
+        return new StringBuilder().append(currentDate).append(" ").append(currentTime).toString();
+    }
+
+
 }

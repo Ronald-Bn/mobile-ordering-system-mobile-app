@@ -14,7 +14,7 @@
         android:theme="@style/Theme.CapstoneProjectv13">
         <activity android:name=".CancelledActivity" android:screenOrientation="portrait" ></activity>
         <activity android:name=".CompletedActivity" android:screenOrientation="portrait" />
-        <activity android:name=".ReceivingActivity" android:screenOrientation="portrait" />
+        <activity android:name=".ReceivingActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HomePage"/>
         <activity android:name=".ShippingActivity" android:screenOrientation="portrait" />
         <activity android:name=".PendingActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HomePage"/>
         <activity android:name=".PaymentActivity" android:screenOrientation="portrait"  android:theme="@style/Theme.HomePage"/>
@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity" android:screenOrientation="portrait"  />
-        <activity android:name=".PhoneAuthActivity" android:screenOrientation="portrait" />
+        <activity android:name=".PhoneAuthActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HomePage"/>
         <activity android:name=".MainActivity" android:screenOrientation="portrait"  android:theme="@style/Theme.HomePage" />
 
         <service

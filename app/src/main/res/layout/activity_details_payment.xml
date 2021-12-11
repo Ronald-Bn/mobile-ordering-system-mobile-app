@@ -45,7 +45,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Select payment method to process \n your order(s)"
+                        android:text="Choose payment method to process \n your order(s)"
                         android:textSize="14sp"
                         android:textColor="@color/white"/>
 
@@ -89,14 +89,14 @@
                     </LinearLayout>
 
                     <TextView
-                    android:id="@+id/TvName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:text="Name"
-                    android:textAllCaps="false"
-                    android:textSize="14sp" />
+                        android:id="@+id/TvName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:text="Name"
+                        android:textAllCaps="false"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/TvPhone"
@@ -160,7 +160,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Select Payment Method"
+                        android:text="Payment Method"
                         android:textAllCaps="false"
                         android:textColor="@color/black"
                         android:textSize="14sp"

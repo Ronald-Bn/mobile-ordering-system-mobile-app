@@ -236,7 +236,7 @@ public class CheckOutActivity extends AppCompatActivity {
                                     }
                                 });
 
-                                Toast.makeText(CheckOutActivity.this, "Placed order successfully", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CheckOutActivity.this, "Place Order Success", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(CheckOutActivity.this,MainActivity.class);
                                 startActivity(intent);
                                 finish();

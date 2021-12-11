@@ -65,9 +65,11 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:text="@string/get_otp"
+            android:textColor="@color/white"
             android:backgroundTint="#DA0000"
             android:textAllCaps="false"
-            tools:targetApi="lollipop" />
+            tools:targetApi="lollipop"
+            />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -135,6 +137,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/verify_otp"
+            android:textColor="@color/white"
             android:backgroundTint="#DA0000"
             android:textAllCaps="false"
             tools:targetApi="lollipop" />

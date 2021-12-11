@@ -111,8 +111,6 @@ public class FragmentProfile extends Fragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.change_profile_dialog, null);
         final AlertDialog.Builder builder = new AlertDialog.Builder((getActivity()));
         builder.setView(view);
-
-
         AlertDialog dialog = builder.create();
         dialog.show();
     }

@@ -75,7 +75,7 @@
         </style>
 
         <style name="MyBottomNavigationView.TextAppearance" parent="TextAppearance.MaterialComponents.Caption">
-        <item name="android:textSize">11sp</item>
+        <item name="android:textSize">9.5sp</item>
         </style>
 
 

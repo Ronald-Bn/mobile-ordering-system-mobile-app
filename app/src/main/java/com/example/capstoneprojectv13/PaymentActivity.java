@@ -13,8 +13,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -98,6 +100,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         cashPaymentBtn = findViewById(R.id.radio_one);
         gCashPaymentBtn = findViewById(R.id.radio_two);
         uploadPhotoBtn = findViewById(R.id.uploadPhotoBtn);
+        uploadPhotoBtn.setEnabled(true);
         btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
         OrderDateTv = findViewById(R.id.orderDateTv);
         OrderIdTv = findViewById(R.id.orderIdTv);
@@ -108,8 +111,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         String cartId = getIntent().getStringExtra("cartId");
         ordersId = getIntent().getStringExtra("ordersId");
 
-        Toast.makeText(this, cartId, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, ordersId, Toast.LENGTH_SHORT).show();
         linearLayout = findViewById(R.id.PaymentLayout);
         linearLayout2 = findViewById(R.id.PaymentLayout2);
         linearLayout.setVisibility(View.VISIBLE);
@@ -208,6 +209,27 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(PaymentActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        referenceNoEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.toString().trim().length()==0){
+                    uploadPhotoBtn.setEnabled(true);
+                } else {
+                    uploadPhotoBtn.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
@@ -361,7 +383,8 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     if(snapshot.exists()){
                         Map<String,Object> updateData = new HashMap<>();
                         updateData.put("payment","Gcash");
-                        updateData.put("status","shipping");
+                        updateData.put("status", "shipping");
+                        updateData.put("status_userid",  "shipping_" + user.getUid());
                         updateData.put("receipt","https://firebasestorage.googleapis.com/v0/b/capstone-project-v-1-3.appspot.com/o/image%2Fno_photo_uploaded.png?alt=media&token=3dff5f60-6a6d-4f6c-a600-00aa5d4a79ac");
                         updateData.put("refno", referenceNoEt.getText().toString().trim());
                         updateData.put("paymentdate", dateAndTime());

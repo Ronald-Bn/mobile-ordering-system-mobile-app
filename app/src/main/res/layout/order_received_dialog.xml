@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="Received Confirmation"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/cancelIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:padding="10dp"
+        android:src="@drawable/ic_x_mark_one"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"
+        />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        style="@style/ld_m"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="By clicking the CONFIRM button, You are satisfied with the quality of the product that you received. And this order(s) will not be able to request a return/refund."
+        android:textSize="14sp" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_height="2dp"
+        style="@style/ld_m"
+        />
+
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/cancelBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/view"
+            android:background="@drawable/custom_button_sharp"
+            android:text="Cancel"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/dark_light"
+        />
+
+        <View
+            android:id="@+id/view"
+            android:layout_height="1dp"
+            android:layout_width="0dp"
+            android:layout_centerHorizontal="true"
+            />
+
+        <Button
+            android:id="@+id/confirmBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/view"
+            android:background="@drawable/custom_button_sharp"
+            android:text="Confirm"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/reddish"
+        />
+    </RelativeLayout>
+</LinearLayout>

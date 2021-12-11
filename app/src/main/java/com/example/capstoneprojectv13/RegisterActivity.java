@@ -54,14 +54,6 @@ public class RegisterActivity extends AppCompatActivity {
         btn_register = findViewById(R.id.Btn_Register);
         checkBox = findViewById(R.id.checkBox);
 
-
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-
-        Toast.makeText(this, "" + dpWidth, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, "" + dpHeight, Toast.LENGTH_SHORT).show();
-
         dialog = new Dialog(this);
 
         btn_register.setOnClickListener(v -> {

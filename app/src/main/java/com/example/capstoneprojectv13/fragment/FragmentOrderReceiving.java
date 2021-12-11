@@ -19,6 +19,7 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,7 +37,7 @@ public class FragmentOrderReceiving extends Fragment {
     private String mParam1;
     private String mParam2;
     private RecyclerView recyclerView;
-
+    private FirebaseAuth mAuth;
     private OrdersReceivingAdapter ordersReceivingAdapter;
     private Parcelable state;
 
@@ -80,10 +81,15 @@ public class FragmentOrderReceiving extends Fragment {
         recyclerView = view.findViewById(R.id.OrdersPendingList);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        Query query = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
+                .child("Orders").orderByChild("status_userid").equalTo("receiving_" + user.getUid());
+
         FirebaseRecyclerOptions<OrdersModel> options =
                 new FirebaseRecyclerOptions.Builder<OrdersModel>()
-                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
-                                .child("Orders").orderByChild("status").equalTo("receiving"), OrdersModel.class)
+                        .setQuery(query, OrdersModel.class)
                         .build();
 
         ordersReceivingAdapter = new OrdersReceivingAdapter(view.getContext(),options);

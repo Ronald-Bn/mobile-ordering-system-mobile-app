@@ -86,14 +86,16 @@ public class LoginActivity extends AppCompatActivity {
         btn_Register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+                startActivity(intent);
             }
         });
 
         btn_ForgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, PasswordActivity.class));
+                Intent intent = new Intent(getApplicationContext(), PasswordActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -147,7 +149,6 @@ public class LoginActivity extends AppCompatActivity {
             btn_Register.setVisibility(View.GONE);
             btn_ForgetPassword.setVisibility(View.GONE);
             registerTv.setVisibility(View.GONE);
-            Toast.makeText(this, "You're already login. Please wait !", Toast.LENGTH_SHORT).show();
             DocumentReference df = FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
             df.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override

@@ -3,6 +3,7 @@ package com.example.capstoneprojectv13;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,10 +33,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Map;
 
-public class ReceivingActivity extends AppCompatActivity {
+public class
+ReceivingActivity extends AppCompatActivity {
 
     private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, shipDate, gCashPaymentRefNo, amountTv;
-    private Button btnPlaceOrder;
+    private Button btnPlaceOrder, returnRefundBtn;
     private String ordersId;
     private int sum = 0;
     private FirebaseFirestore fStore;
@@ -50,12 +52,16 @@ public class ReceivingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_receiving);
+        Toolbar mToolbar = findViewById(R.id.toolbar_order_details);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.action_bar_payment_options);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setTitle("");
+        mToolbar.setNavigationOnClickListener(view -> onBackPressed());;
 
         String cartId = getIntent().getStringExtra("cartId");
         ordersId = getIntent().getStringExtra("ordersId");
+        String status = getIntent().getStringExtra("status");
 
         TvAddress = findViewById(R.id.TvAddress);
         TvZipCode = findViewById(R.id.TvZipcode);
@@ -63,6 +69,7 @@ public class ReceivingActivity extends AppCompatActivity {
         TvShip = findViewById(R.id.ShipPriceTv);
         TvTotalPayment = findViewById(R.id.TvTotalTv);
         btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
+        returnRefundBtn = findViewById(R.id.returnRefundBtn);
         OrderDateTv = findViewById(R.id.orderDateTv);
         OrderIdTv = findViewById(R.id.orderIdTv);
         confirmDate =findViewById(R.id.confirmDate);
@@ -71,8 +78,19 @@ public class ReceivingActivity extends AppCompatActivity {
         cashPaymentRL = findViewById(R.id.cashPaymentRL);
         gCashPaymentRL = findViewById(R.id.gCashPaymentRL);
         gCashPaymentRefNo = findViewById(R.id.gCashPaymentRefNo);
-        amountTv = findViewById(R.id.amountTv);
 
+
+        if(status.equals("completed")){
+            btnPlaceOrder.setEnabled(true);
+            returnRefundBtn.setEnabled(true);
+            returnRefundBtn.setBackgroundColor(getResources().getColor(R.color.reddish));
+            btnPlaceOrder.setBackgroundColor(getResources().getColor(R.color.reddish));
+        }else{
+            btnPlaceOrder.setEnabled(false);
+            returnRefundBtn.setEnabled(false);
+            returnRefundBtn.setBackgroundColor(getResources().getColor(R.color.dark_light));
+            btnPlaceOrder.setBackgroundColor(getResources().getColor(R.color.dark_light));
+        }
 
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -81,8 +99,8 @@ public class ReceivingActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getInstance().getCurrentUser();
         FirebaseRecyclerOptions<CartModel> options =
                 new FirebaseRecyclerOptions.Builder<CartModel>()
-                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Cart")
-                                .child(user.getUid()).orderByChild("cartId").equalTo(cartId), CartModel.class)
+                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Cart_List")
+                                .child(user.getUid()).child(cartId), CartModel.class)
                         .build();
 
         cartAdapter = new CartAdapter(this, options);
@@ -104,9 +122,11 @@ public class ReceivingActivity extends AppCompatActivity {
         });
 
         databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference("Cart")
-                .child(user.getUid());
-        databaseReference.orderByChild("cartId").equalTo(cartId).addValueEventListener(new ValueEventListener() {
+                .getReference("Cart_List")
+                .child(user.getUid())
+                .child(cartId);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -148,7 +168,6 @@ public class ReceivingActivity extends AppCompatActivity {
                     if(String.valueOf(payment).equals("Gcash")){
                         gCashPaymentRL.setVisibility(View.VISIBLE);
                         gCashPaymentRefNo.setText(String.valueOf(refno));
-                        amountTv.setText(String.valueOf(amount));
                     }else{
                         cashPaymentRL.setVisibility(View.VISIBLE);
                     }

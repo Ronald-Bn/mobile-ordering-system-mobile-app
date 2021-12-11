@@ -18,6 +18,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.capstoneprojectv13.model.CartModel;
+import com.example.capstoneprojectv13.model.NotificationModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,12 +46,19 @@ public class NotificationService extends Service {
     public final String CHANNEL_ID = "Personal Notification";
     public static final int NOTIFICATION_ID = 101;
 
-    private String key;
+    private String cartId = "", userid = "", ordersid = "";
     Timer timer;
     TimerTask timerTask;
     String TAG = "Timers";
     int Your_X_SECS = 5;
     FirebaseAuth mAuth;
+
+    private final long generateNotifyId = generateRandom(10);
+
+
+    private boolean alreadyExecuted = false;
+    private int a = 0;
+
 
 
     @Nullable
@@ -118,7 +127,6 @@ public class NotificationService extends Service {
                 handler.post(new Runnable() {
                     public void run() {
                         try {
-
                             FirebaseUser user = mAuth.getInstance().getCurrentUser();
                             DatabaseReference fromPath = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
                                     .getReference()
@@ -126,21 +134,106 @@ public class NotificationService extends Service {
                                     .child(user.getUid())
                                     .child("pending");
 
-
                             fromPath.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     if(snapshot.hasChild("notify")){
-                                        NotificationDisplay();
-                                        Map<String, Object> updateData = new HashMap<>();
-                                        updateData.put("notify", true);
-                                        snapshot.getRef().updateChildren(updateData);
+                                        NotificationModel notificationModel = snapshot.getValue(NotificationModel.class);
+                                        cartId = notificationModel.getCartId();
+                                        ordersid = notificationModel.getOrdersid();
+                                        userid = notificationModel.getUserid();
+
+                                        if(!alreadyExecuted) {
+                                            setApprovedNotification();
+                                            alreadyExecuted = true;
+                                            a++;
+                                        }else if(a==1){
+                                            alreadyExecuted = false;
+                                            a--;
+                                        } else{
+                                            Log.d(TAG, ""+a);
+                                        }
+
+                                        snapshot.getRef().removeValue();
                                     }
                                 }
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError error) {
                                     Log.d(TAG, error.getMessage());
+                                }
+                            });
+
+
+                            DatabaseReference shipPath = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                    .getReference()
+                                    .child("Notifications")
+                                    .child(user.getUid())
+                                    .child("shipping");
+
+                            shipPath.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if(snapshot.hasChild("notify")){
+                                        NotificationModel notificationModel = snapshot.getValue(NotificationModel.class);
+                                        cartId = notificationModel.getCartId();
+                                        ordersid = notificationModel.getOrdersid();
+                                        userid = notificationModel.getUserid();
+
+                                        if(!alreadyExecuted) {
+                                            setShippingNotification();
+                                            alreadyExecuted = true;
+                                            a++;
+                                        }else if(a==1){
+                                            alreadyExecuted = false;
+                                            a--;
+                                        } else{
+                                            Log.d(TAG, ""+a);
+                                        }
+
+                                        snapshot.getRef().removeValue();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Log.d(TAG,error.getMessage());
+                                }
+                            });
+
+                            DatabaseReference receivePath = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                    .getReference()
+                                    .child("Notifications")
+                                    .child(user.getUid())
+                                    .child("receiving");
+
+                            receivePath.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if(snapshot.hasChild("notify")){
+                                        NotificationModel notificationModel = snapshot.getValue(NotificationModel.class);
+                                        cartId = notificationModel.getCartId();
+                                        ordersid = notificationModel.getOrdersid();
+                                        userid = notificationModel.getUserid();
+
+                                        if(!alreadyExecuted) {
+                                            setReceivingNotification();
+                                            alreadyExecuted = true;
+                                            a++;
+                                        }else if(a==1){
+                                            alreadyExecuted = false;
+                                            a--;
+                                        } else{
+                                            Log.d(TAG, ""+a);
+                                        }
+
+                                        snapshot.getRef().removeValue();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
                                 }
                             });
                         }catch (Exception e) {
@@ -175,26 +268,69 @@ public class NotificationService extends Service {
         });
     }
 
-    public void NotificationDisplay() {
+    public void setApprovedNotification() {
         Intent landingIntent = new Intent(this, PaymentActivity.class);
         landingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        landingIntent.putExtra("cartId", "5992407292");
-        landingIntent.putExtra("ordersId","-MpIZCejhIsCqxdT792k");
+        landingIntent.putExtra("cartId", cartId);
+        landingIntent.putExtra("ordersId",ordersid);
         PendingIntent landingPendingIntent = PendingIntent.getActivity(this, 0,
                 landingIntent, PendingIntent.FLAG_ONE_SHOT);
 
-        FirebaseUser user = mAuth.getInstance().getCurrentUser();
-        DatabaseReference ref = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference()
-                .child("Orders")
-                .child(user.getUid());
-
-
-        String text = "Your Order" + user.getUid() + " " + "has been approved";
+        String text = "Your Order " + cartId + " has been approved";
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
         builder.setSmallIcon(R.drawable.ic_launcher_foreground);
         builder.setContentTitle("Order Approved");
-        builder.setContentText("Your Order " + user.getUid() + "\n has been approved");
+        builder.setContentText("Your Order " + cartId + " has been approved");
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        builder.setStyle(new NotificationCompat.BigTextStyle()
+                .bigText(text));
+        builder.setAutoCancel(true);
+
+        builder.setContentIntent(landingPendingIntent);
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(NOTIFICATION_ID, builder.build());
+
+    }
+
+    public void setShippingNotification() {
+        Intent landingIntent = new Intent(this, ReceivingActivity.class);
+        landingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        landingIntent.putExtra("cartId", cartId);
+        landingIntent.putExtra("ordersId",ordersid);
+        PendingIntent landingPendingIntent = PendingIntent.getActivity(this, 0,
+                landingIntent, PendingIntent.FLAG_ONE_SHOT);
+
+        String text = "Your Order " + cartId + " has been Shipped";
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
+        builder.setContentTitle("Order Shipped");
+        builder.setContentText("Your Order " + cartId + " has been Shipped");
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        builder.setStyle(new NotificationCompat.BigTextStyle()
+                .bigText(text));
+        builder.setAutoCancel(true);
+
+        builder.setContentIntent(landingPendingIntent);
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(NOTIFICATION_ID, builder.build());
+
+    }
+
+
+    public void setReceivingNotification() {
+        Intent landingIntent = new Intent(this, ReceivingActivity.class);
+        landingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        landingIntent.putExtra("cartId", cartId);
+        landingIntent.putExtra("ordersId",ordersid);
+        landingIntent.putExtra("status", "completed");
+        PendingIntent landingPendingIntent = PendingIntent.getActivity(this, 0,
+                landingIntent, PendingIntent.FLAG_ONE_SHOT);
+
+        String text = "Your Order " + cartId + " has been Delivered";
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
+        builder.setContentTitle("Order Delivered");
+        builder.setContentText("Your Order " + cartId + " has been Delivered");
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         builder.setStyle(new NotificationCompat.BigTextStyle()
                 .bigText(text));
@@ -218,5 +354,15 @@ public class NotificationService extends Service {
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             notificationManager.createNotificationChannel(notificationChannel);
         }
+    }
+
+    public static long generateRandom(int length) {
+        Random random = new Random();
+        char[] digits = new char[length];
+        digits[0] = (char) (random.nextInt(9) + '1');
+        for (int i = 1; i < length; i++) {
+            digits[i] = (char) (random.nextInt(10) + '0');
+        }
+        return Long.parseLong(new String(digits));
     }
 }

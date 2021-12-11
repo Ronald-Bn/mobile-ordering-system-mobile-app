@@ -27,6 +27,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 import java.util.Map;
 
@@ -91,10 +93,10 @@ public class FragmentCart extends Fragment {
         CartTotalTv = view.findViewById(R.id.CartTotalTv);
 
 
-
         recyclerView = view.findViewById(R.id.CartRecyclerList);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
@@ -141,6 +143,8 @@ public class FragmentCart extends Fragment {
                 startActivity(intent);
             }
         });
+
+
 
         return view;
     }
