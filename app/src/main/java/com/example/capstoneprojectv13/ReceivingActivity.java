@@ -7,10 +7,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +23,8 @@ import com.example.capstoneprojectv13.adapter.CartAdapter;
 import com.example.capstoneprojectv13.model.CartModel;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,13 +37,18 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class
 ReceivingActivity extends AppCompatActivity {
 
     private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, shipDate, gCashPaymentRefNo, amountTv;
-    private Button btnPlaceOrder, returnRefundBtn;
+    private Button receiveBtn, returnRefundBtn;
     private String ordersId;
     private int sum = 0;
     private FirebaseFirestore fStore;
@@ -52,24 +63,26 @@ ReceivingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_receiving);
+
+        //Toolbar Customization
         Toolbar mToolbar = findViewById(R.id.toolbar_order_details);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mToolbar.setTitle("");
-        mToolbar.setNavigationOnClickListener(view -> onBackPressed());;
+        mToolbar.setNavigationOnClickListener(view -> onBackPressed());
+
 
         String cartId = getIntent().getStringExtra("cartId");
         ordersId = getIntent().getStringExtra("ordersId");
-        String status = getIntent().getStringExtra("status");
+        String status = getIntent().getStringExtra("notify");
 
         TvAddress = findViewById(R.id.TvAddress);
         TvZipCode = findViewById(R.id.TvZipcode);
         TvSubtotal = findViewById(R.id.SubTotalTv);
         TvShip = findViewById(R.id.ShipPriceTv);
         TvTotalPayment = findViewById(R.id.TvTotalTv);
-        btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
-        returnRefundBtn = findViewById(R.id.returnRefundBtn);
+        receiveBtn = findViewById(R.id.receiveBtn);
         OrderDateTv = findViewById(R.id.orderDateTv);
         OrderIdTv = findViewById(R.id.orderIdTv);
         confirmDate =findViewById(R.id.confirmDate);
@@ -78,18 +91,26 @@ ReceivingActivity extends AppCompatActivity {
         cashPaymentRL = findViewById(R.id.cashPaymentRL);
         gCashPaymentRL = findViewById(R.id.gCashPaymentRL);
         gCashPaymentRefNo = findViewById(R.id.gCashPaymentRefNo);
+        returnRefundBtn = findViewById(R.id.returnRefundBtn);
+        returnRefundBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RequestReturnActivity.class);
+            intent.putExtra("cartId",cartId);
+            intent.putExtra("ordersId", ordersId);
+            intent.putExtra("orderTime",OrderDateTv.getText().toString());
+            startActivity(intent);
+        });
 
 
-        if(status.equals("completed")){
-            btnPlaceOrder.setEnabled(true);
+        if(status.equals("1")){
+            receiveBtn.setEnabled(true);
             returnRefundBtn.setEnabled(true);
             returnRefundBtn.setBackgroundColor(getResources().getColor(R.color.reddish));
-            btnPlaceOrder.setBackgroundColor(getResources().getColor(R.color.reddish));
+            receiveBtn.setBackgroundColor(getResources().getColor(R.color.reddish));
         }else{
-            btnPlaceOrder.setEnabled(false);
+            receiveBtn.setEnabled(false);
             returnRefundBtn.setEnabled(false);
             returnRefundBtn.setBackgroundColor(getResources().getColor(R.color.dark_light));
-            btnPlaceOrder.setBackgroundColor(getResources().getColor(R.color.dark_light));
+            receiveBtn.setBackgroundColor(getResources().getColor(R.color.dark_light));
         }
 
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
@@ -148,6 +169,7 @@ ReceivingActivity extends AppCompatActivity {
             }
         });
 
+        //Getting data's into views
         databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
                 .getReference("Orders");
         databaseReference.orderByChild("cartId").equalTo(cartId).addValueEventListener(new ValueEventListener() {
@@ -163,7 +185,6 @@ ReceivingActivity extends AppCompatActivity {
                     Object shipdate = map.get("shipdate");
                     Object refno = map.get("refno");
                     Object payment = map.get("payment");
-                    Object amount = map.get("amount");
 
                     if(String.valueOf(payment).equals("Gcash")){
                         gCashPaymentRL.setVisibility(View.VISIBLE);
@@ -186,6 +207,76 @@ ReceivingActivity extends AppCompatActivity {
                 Toast.makeText(ReceivingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        receiveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View view = LayoutInflater.from(v.getRootView().getContext()).inflate(R.layout.order_received_dialog, null);
+                ImageView cancelIv = view.findViewById(R.id.cancelIv);
+                Button cancelBtn = view.findViewById(R.id.cancelBtn);
+                Button confirmBtn = view.findViewById(R.id.confirmBtn);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(view.getRootView().getContext());
+                builder.setView(view);
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                cancelIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                cancelBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                confirmBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        DatabaseReference reference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                .getReference("Orders")
+                                .child(ordersId);
+
+                        reference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                FirebaseUser user = mAuth.getInstance().getCurrentUser();
+                                Map<String, Object> updateData = new HashMap<>();
+                                updateData.put("receivedate",dateAndTime());
+                                updateData.put("completed",reportDateAndTime());
+                                updateData.put("status_userid", "completed_" + user.getUid());
+                                reference.updateChildren(updateData).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Toast.makeText(ReceivingActivity.this, "Thank you for buying our product(s)", Toast.LENGTH_SHORT).show();
+                                        onBackPressed();
+                                        dialog.dismiss();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(ReceivingActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(ReceivingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -204,5 +295,25 @@ ReceivingActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         state = recyclerView.getLayoutManager().onSaveInstanceState();
+    }
+
+    private String dateAndTime(){
+        // Current Date and Time
+        Date dateAndTime = Calendar.getInstance().getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String currentDate = dateFormat.format(dateAndTime);
+        String currentTime = timeFormat.format(dateAndTime);
+
+        return new StringBuilder().append(currentDate).append(" ").append(currentTime).toString();
+    }
+
+    private String reportDateAndTime(){
+        // Current Date and Time
+        Date dateAndTime = Calendar.getInstance().getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMddyyyy", Locale.getDefault());
+        String currentDate = dateFormat.format(dateAndTime);
+
+        return currentDate;
     }
 }

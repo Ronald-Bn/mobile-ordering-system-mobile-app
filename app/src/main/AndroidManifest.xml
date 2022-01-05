@@ -12,25 +12,65 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CapstoneProjectv13">
-        <activity android:name=".CancelledActivity" android:screenOrientation="portrait" ></activity>
-        <activity android:name=".CompletedActivity" android:screenOrientation="portrait" />
-        <activity android:name=".ReceivingActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HomePage"/>
-        <activity android:name=".ShippingActivity" android:screenOrientation="portrait" />
-        <activity android:name=".PendingActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HomePage"/>
-        <activity android:name=".PaymentActivity" android:screenOrientation="portrait"  android:theme="@style/Theme.HomePage"/>
-        <activity android:name=".CheckOutActivity" android:screenOrientation="portrait" />
-        <activity android:name=".ProductsActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HomePage"/>
-        <activity android:name=".PasswordActivity" android:screenOrientation="portrait"  android:theme="@style/Theme.HomePage"/>
-        <activity android:name=".LoginActivity"
-            android:screenOrientation="portrait" >
+        <activity android:name=".FullScreenImageActivity"></activity>
+        <activity
+            android:name=".RequestReturnActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.HomePage" />
+        <activity
+            android:name=".CancelledActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CompletedActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ReceivingActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.HomePage" />
+        <activity
+            android:name=".ShippingActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.HomePage"/>
+        <activity
+            android:name=".PendingActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.HomePage" />
+        <activity
+            android:name=".PaymentActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.HomePage" />
+        <activity
+            android:name=".CheckOutActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.HomePage"/>
+        <activity
+            android:name=".ProductsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.HomePage" />
+        <activity
+            android:name=".PasswordActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.HomePage" />
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity" android:screenOrientation="portrait"  />
-        <activity android:name=".PhoneAuthActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HomePage"/>
-        <activity android:name=".MainActivity" android:screenOrientation="portrait"  android:theme="@style/Theme.HomePage" />
+        <activity
+            android:name=".RegisterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PhoneAuthActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.HomePage" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.HomePage" />
 
         <service
             android:name=".NotificationService"
@@ -41,7 +81,29 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
-    </application>
 
+        <service
+            android:name=".CustomMessagingService"
+            android:exported="false"
+            >
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/notification_logo" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+        <receiver android:name=".NotificationReceiver" android:enabled="true"
+            android:exported="false"/>
+    </application>
 
 </manifest>

@@ -57,7 +57,7 @@ public class OrdersReceivingAdapter extends FirebaseRecyclerAdapter<OrdersModel,
 
     @Override
     protected void onBindViewHolder(@NonNull OrdersReceivingAdapter.myViewHolder holder, int position, @NonNull OrdersModel model) {
-        if(model.getStatus().equals("completed")){
+        if(model.getNotify().equals("1")){
             holder.OrdersBtn.setEnabled(true);
             holder.OrdersBtn.setBackgroundColor(holder.OrdersBtn.getContext().getResources().getColor(R.color.reddish));
         }else{
@@ -75,7 +75,7 @@ public class OrdersReceivingAdapter extends FirebaseRecyclerAdapter<OrdersModel,
                 Intent intent = new Intent(context, ReceivingActivity.class);
                 intent.putExtra("ordersId", getRef(position).getKey());
                 intent.putExtra("cartId", model.getCartId());
-                intent.putExtra("status", model.getStatus());
+                intent.putExtra("notify", model.getNotify());
                 context.startActivity(intent);
             }
         });
@@ -109,7 +109,7 @@ public class OrdersReceivingAdapter extends FirebaseRecyclerAdapter<OrdersModel,
                 confirmBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
+
                         DatabaseReference reference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
                                 .getReference("Orders")
                                 .child(getRef(position).getKey());
@@ -120,6 +120,7 @@ public class OrdersReceivingAdapter extends FirebaseRecyclerAdapter<OrdersModel,
                                 FirebaseUser user = mAuth.getInstance().getCurrentUser();
                                     Map<String, Object> updateData = new HashMap<>();
                                     updateData.put("receivedate",dateAndTime());
+                                    updateData.put("status", "completed");
                                     updateData.put("status_userid", "completed_" + user.getUid());
                                     reference.updateChildren(updateData).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
@@ -191,6 +192,4 @@ public class OrdersReceivingAdapter extends FirebaseRecyclerAdapter<OrdersModel,
 
         return new StringBuilder().append(currentDate).append(" ").append(currentTime).toString();
     }
-
-
 }

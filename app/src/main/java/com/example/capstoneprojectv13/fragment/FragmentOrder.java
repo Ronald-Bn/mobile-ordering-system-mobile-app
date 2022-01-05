@@ -31,7 +31,7 @@ public class FragmentOrder extends Fragment {
     private String mParam2;
     private ViewPagerFragmentAdapter viewPagerFragmentAdapter;
 
-    private String[] titles = new String[]{"Pending","To Pay","To Ship","To Receive","Completed","Cancelled"};
+    private String[] titles = new String[]{"Pending","To Pay","To Ship","To Receive","Completed","Cancelled","Return/Refund"};
 
     public FragmentOrder() {
         // Required empty public constructor

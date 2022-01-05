@@ -18,6 +18,7 @@ import com.example.capstoneprojectv13.adapter.OrdersCancelledAdapter;
 import com.example.capstoneprojectv13.model.OrdersModel;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 /**
@@ -38,6 +39,7 @@ public class FragmentOrderCancelled extends Fragment {
     private RecyclerView recyclerView;
     private OrdersCancelledAdapter ordersCancelledAdapter;
     private Parcelable state;
+    private FirebaseAuth mAuth;
 
     public FragmentOrderCancelled() {
         // Required empty public constructor
@@ -80,10 +82,15 @@ public class FragmentOrderCancelled extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
 
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
         FirebaseRecyclerOptions<OrdersModel> options =
                 new FirebaseRecyclerOptions.Builder<OrdersModel>()
-                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference().child("Orders")
-                                .orderByChild("status").equalTo("rejected"), OrdersModel.class)
+                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                .getReference()
+                                .child("Orders")
+                                .orderByChild("status_userid")
+                                .equalTo("rejected_" + user.getUid()), OrdersModel.class)
                         .build();
 
         ordersCancelledAdapter = new OrdersCancelledAdapter(view.getContext(),options);

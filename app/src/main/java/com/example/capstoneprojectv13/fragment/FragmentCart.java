@@ -1,6 +1,7 @@
 package com.example.capstoneprojectv13.fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -15,7 +17,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.capstoneprojectv13.CheckOutActivity;
+import com.example.capstoneprojectv13.ProductsActivity;
 import com.example.capstoneprojectv13.R;
+import com.example.capstoneprojectv13.SwipeHelper;
 import com.example.capstoneprojectv13.adapter.CartAdapter;
 import com.example.capstoneprojectv13.model.CartModel;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -110,6 +114,46 @@ public class FragmentCart extends Fragment {
         cartAdapter = new CartAdapter(view.getContext(),options);
         recyclerView.setAdapter(cartAdapter);
 
+        SwipeHelper swipeHelper = new SwipeHelper(getActivity(), recyclerView) {
+            @Override
+            public void instantiateUnderlayButton(RecyclerView.ViewHolder viewHolder, List<UnderlayButton> underlayButtons) {
+                underlayButtons.add(new SwipeHelper.UnderlayButton(
+                        "Delete",
+                        0,
+                        Color.parseColor("#FF3C30"),
+                        new SwipeHelper.UnderlayButtonClickListener() {
+                            @Override
+                            public void onClick(int pos) {
+                                String key = ((TextView) recyclerView.findViewHolderForAdapterPosition(pos).itemView.findViewById(R.id.cartStatus)).getText().toString();
+                                databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                        .getReference("Cart")
+                                        .child(user.getUid())
+                                        .child(key);
+                                databaseReference.removeValue();
+                            }
+                        }
+                ));
+
+                underlayButtons.add(new SwipeHelper.UnderlayButton(
+                        "Edit",
+                        0,
+                        Color.parseColor("#FF9502"),
+                        new SwipeHelper.UnderlayButtonClickListener() {
+                            @Override
+                            public void onClick(int pos) {
+                                String key = ((TextView) recyclerView.findViewHolderForAdapterPosition(pos).itemView.findViewById(R.id.cartStatus)).getText().toString();
+                                String quantity = ((TextView) recyclerView.findViewHolderForAdapterPosition(pos).itemView.findViewById(R.id.cartStatus)).getText().toString();
+                                Intent intent = new Intent(getActivity().getApplication(), ProductsActivity.class);
+                                intent.putExtra("id" , key);
+                                intent.putExtra("quantity", quantity);
+                                startActivity(intent);
+                            }
+                        }
+                ));
+            }
+        };
+
+        swipeHelper.attachSwipe();
 
         databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
                 .getReference("Cart")

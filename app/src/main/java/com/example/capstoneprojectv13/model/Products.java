@@ -6,15 +6,21 @@ public class Products {
 
     }
 
-    public Products(String name, String price, String category, String description, String status, String image) {
+
+
+    public Products(String name, String price, String category, String description, String status, String image, int five_star, int four_star, int three_star, int two_star, int one_star) {
         this.name = name;
         this.price = price;
         this.category = category;
         this.description = description;
         this.status = status;
         this.image = image;
+        this.five_star = five_star;
+        this.four_star = four_star;
+        this.three_star = three_star;
+        this.two_star = two_star;
+        this.one_star = one_star;
     }
-
 
     private String name;
     private String price;
@@ -22,6 +28,51 @@ public class Products {
     private String description;
     private String status;
     private String image;
+    private int five_star;
+    private int four_star;
+    private int three_star;
+    private int two_star;
+    private int one_star;
+
+    public int getFive_star() {
+        return five_star;
+    }
+
+    public void setFive_star(int five_star) {
+        this.five_star = five_star;
+    }
+
+    public int getFour_star() {
+        return four_star;
+    }
+
+    public void setFour_star(int four_star) {
+        this.four_star = four_star;
+    }
+
+    public int getThree_star() {
+        return three_star;
+    }
+
+    public void setThree_star(int three_star) {
+        this.three_star = three_star;
+    }
+
+    public int getTwo_star() {
+        return two_star;
+    }
+
+    public void setTwo_star(int two_star) {
+        this.two_star = two_star;
+    }
+
+    public int getOne_star() {
+        return one_star;
+    }
+
+    public void setOne_star(int one_star) {
+        this.one_star = one_star;
+    }
 
     public String getName() {
         return name;

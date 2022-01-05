@@ -8,10 +8,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -59,6 +64,7 @@ public class CheckOutActivity extends AppCompatActivity {
     private Parcelable state;
     private UUID uuid = UUID.randomUUID();
     private String uuidAsString = uuid.toString();
+    private Dialog dialog;
 
     private final long generateCartId = generateRandom(10);
 
@@ -119,6 +125,7 @@ public class CheckOutActivity extends AppCompatActivity {
         });
 
 
+
         TvSubtotal.setText(subtotal);
         int a = Integer.parseInt(subtotal);
         int b = Integer.parseInt(TvShip.getText().toString());
@@ -126,41 +133,106 @@ public class CheckOutActivity extends AppCompatActivity {
 
         TvTotalPayment.setText(String.valueOf(c));
 
-        DatabaseReference fromPath = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference().child("Cart").child(user.getUid());
-
-        DatabaseReference toPath = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference().child("Cart_List").child(user.getUid()).child(String.valueOf(generateCartId));
-
         btnPlaceOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shiftCart(fromPath,toPath);
+                dialog = new Dialog(CheckOutActivity.this);
+                dialog.setContentView(R.layout.loading_dialog);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.setCancelable(false);
+                dialog.show();
                 addToOrders();
             }
         });
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        cartAdapter.startListening();
+    private void addToOrders () {
+        FirebaseUser user = mAuth.getInstance().getCurrentUser();
+        databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference()
+                .child("Orders");
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                String key = databaseReference.push().getKey();
+                Map<String,Object> updateData = new HashMap<>();
+                updateData.put("userid", user.getUid());
+                updateData.put("key", key);
+                updateData.put("cartId",String.valueOf(generateCartId));
+                updateData.put("name", TvName.getText().toString());
+                updateData.put("phone", TvPhone.getText().toString());
+                updateData.put("address", TvAddress.getText().toString());
+                updateData.put("zipcode", TvZipCode.getText().toString());
+                updateData.put("date", dateAndTime());
+                updateData.put("pending" , reportDateAndTime());
+                updateData.put("status", "pending");
+                updateData.put("status_userid", "pending_" + user.getUid());
+                updateData.put("totalpayment", TvTotalPayment.getText().toString());
+
+                databaseReference.child(key).setValue(updateData)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                DatabaseReference fromPath = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                        .getReference().child("Cart").child(user.getUid());
+
+                                DatabaseReference toPath = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                        .getReference().child("Cart_List").child(user.getUid()).child(String.valueOf(generateCartId));
+
+                                fromPath.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if(snapshot.exists()){
+                                            for(DataSnapshot d : snapshot.getChildren()){
+                                                HashMap<String, Object> updateData = new HashMap<>();
+                                                updateData.put("key", "confirmed");
+                                                fromPath.child(String.valueOf(d.getKey())).updateChildren(updateData).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void unused) {
+                                                        shiftCart(fromPath,toPath);
+                                                        dialog.dismiss();
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(CheckOutActivity.this, "Place Order Fail", Toast.LENGTH_SHORT).show();
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Toast.makeText(CheckOutActivity.this, "Place Order Fail", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                                Toast.makeText(CheckOutActivity.this, "Place Order Success", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(CheckOutActivity.this,MainActivity.class);
+                                startActivity(intent);
+                                finish();
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(CheckOutActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(CheckOutActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        state = recyclerView.getLayoutManager().onSaveInstanceState();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        recyclerView.getLayoutManager().onRestoreInstanceState(state);
-    }
-
-
 
     private void shiftCart(final DatabaseReference fromPath, final DatabaseReference toPath){
         fromPath.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -186,78 +258,6 @@ public class CheckOutActivity extends AppCompatActivity {
         });
     }
 
-    private void addToOrders () {
-        FirebaseUser user = mAuth.getInstance().getCurrentUser();
-
-        databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference()
-                .child("Orders");
-
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                String key = databaseReference.push().getKey();
-                Map<String,Object> updateData = new HashMap<>();
-                updateData.put("userid", user.getUid());
-                updateData.put("key", key);
-                updateData.put("cartId",String.valueOf(generateCartId));
-                updateData.put("name", TvName.getText().toString());
-                updateData.put("phone", TvPhone.getText().toString());
-                updateData.put("address", TvAddress.getText().toString());
-                updateData.put("zipcode", TvZipCode.getText().toString());
-                updateData.put("date", dateAndTime());
-                updateData.put("status", "pending");
-                updateData.put("status_userid", "pending_" + user.getUid());
-                updateData.put("totalpayment", TvTotalPayment.getText().toString());
-
-                databaseReference.child(key).setValue(updateData)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                Map<String, Object> updateCart = new HashMap<>();
-                                updateCart.put("key", "pending");
-                                databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Cart").child(user.getUid());
-
-                                databaseReference.orderByChild("key").equalTo("ongoing").addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                                        for(DataSnapshot childSnapshot: snapshot.getChildren()) {
-                                            if (childSnapshot.hasChild("key")) {
-                                                databaseReference.child(childSnapshot.getKey()).child("key").setValue("pending");
-                                                databaseReference.child(childSnapshot.getKey()).child("cartId").setValue(String.valueOf(generateCartId));
-                                            }
-                                        }
-                                    }
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-                                        Toast.makeText(CheckOutActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-
-                                Toast.makeText(CheckOutActivity.this, "Place Order Success", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(CheckOutActivity.this,MainActivity.class);
-                                startActivity(intent);
-                                finish();
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(CheckOutActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(CheckOutActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-
     private String dateAndTime(){
         // Current Date and Time
         Date dateAndTime = Calendar.getInstance().getTime();
@@ -266,6 +266,15 @@ public class CheckOutActivity extends AppCompatActivity {
         String currentDate = dateFormat.format(dateAndTime);
         String currentTime = timeFormat.format(dateAndTime);
         return new StringBuilder().append(currentDate).append(" ").append(currentTime).toString();
+    }
+
+    private String reportDateAndTime(){
+        // Current Date and Time
+        Date dateAndTime = Calendar.getInstance().getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMddyyyy", Locale.getDefault());
+        String currentDate = dateFormat.format(dateAndTime);
+
+        return currentDate;
     }
 
     public static long generateRandom(int length) {
@@ -278,6 +287,23 @@ public class CheckOutActivity extends AppCompatActivity {
         return Long.parseLong(new String(digits));
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        cartAdapter.startListening();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        state = recyclerView.getLayoutManager().onSaveInstanceState();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        recyclerView.getLayoutManager().onRestoreInstanceState(state);
+    }
 
 }
 

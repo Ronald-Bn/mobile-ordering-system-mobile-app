@@ -7,9 +7,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Parcelable;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.capstoneprojectv13.adapter.MainProductsAdapter;
 import com.example.capstoneprojectv13.R;
@@ -36,7 +42,8 @@ public class FragmentHome extends Fragment {
     private RecyclerView recyclerView;
     private MainProductsAdapter mainProductsAdapter;
     private FirebaseAuth mAuth;
-
+    private EditText search_field;
+    private Button AllProducts, Men, Women;
     private Parcelable state;
 
     public FragmentHome() {
@@ -81,7 +88,6 @@ public class FragmentHome extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         recyclerView = view.findViewById(R.id.HomeRecyclerList);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
         FirebaseRecyclerOptions<Products> options =
@@ -93,7 +99,83 @@ public class FragmentHome extends Fragment {
         mainProductsAdapter = new MainProductsAdapter(view.getContext(),options);
         recyclerView.setAdapter(mainProductsAdapter);
 
+        search_field = view.findViewById(R.id.search_field);
+        AllProducts = view.findViewById(R.id.AllProducts);
+        AllProducts.setOnClickListener(v->{
+            getAllProducts();
+        });
+
+        Men = view.findViewById(R.id.Men);
+        Men.setOnClickListener(v->{
+            getAllMenProducts();
+        });
+        Women = view.findViewById(R.id.Women);
+        Women.setOnClickListener(v -> {
+            getAllWomenProducts();
+        });
+
+        search_field.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    txtSearch(search_field.getText().toString().trim());
+                    return true;
+                }
+                return false;
+            }
+        });
         return view;
+    }
+
+
+
+    private void txtSearch(String str) {
+        FirebaseRecyclerOptions<Products> options =
+                new FirebaseRecyclerOptions.Builder<Products>()
+                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference().child("Products").orderByChild("name").startAt(str).endAt(str + "~"), Products.class)
+                        .build();
+
+        mainProductsAdapter = new MainProductsAdapter(getActivity(), options);
+        mainProductsAdapter.startListening();
+    }
+
+    private void getAllProducts() {
+        FirebaseRecyclerOptions<Products> allProducts =
+                new FirebaseRecyclerOptions.Builder<Products>()
+                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference().child("Products").orderByChild("status").equalTo("Available"), Products.class)
+                        .build();
+
+        mainProductsAdapter = new MainProductsAdapter(getActivity(), allProducts);
+        recyclerView.setAdapter(mainProductsAdapter);
+        mainProductsAdapter.startListening();
+    }
+
+    private void getAllMenProducts() {
+        FirebaseRecyclerOptions<Products> allMenProducts =
+                new FirebaseRecyclerOptions.Builder<Products>()
+                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference().child("Products").orderByChild("category").equalTo("MEN"), Products.class)
+                        .build();
+
+        mainProductsAdapter = new MainProductsAdapter(getActivity(), allMenProducts);
+        recyclerView.setAdapter(mainProductsAdapter);
+        mainProductsAdapter.startListening();
+    }
+
+    private void getAllWomenProducts() {
+        FirebaseRecyclerOptions<Products> allMenProducts =
+                new FirebaseRecyclerOptions.Builder<Products>()
+                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference().child("Products").orderByChild("category").equalTo("WOMEN"), Products.class)
+                        .build();
+
+        mainProductsAdapter = new MainProductsAdapter(getActivity(), allMenProducts);
+        recyclerView.setAdapter(mainProductsAdapter);
+        mainProductsAdapter.startListening();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mainProductsAdapter.startListening();
     }
 
     @Override
@@ -108,9 +190,4 @@ public class FragmentHome extends Fragment {
         recyclerView.getLayoutManager().onRestoreInstanceState(state);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        mainProductsAdapter.startListening();
-    }
 }

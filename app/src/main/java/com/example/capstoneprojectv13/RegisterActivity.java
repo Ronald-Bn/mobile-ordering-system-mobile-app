@@ -26,7 +26,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
 
-    private EditText etfullname , etphonenum, etemail, etpassword, etconfirmpassword, etaddress, etzipcode;
+    private EditText firstNameEditText,lastNameEditText, etphonenum, etemail, etpassword, etconfirmpassword, etaddress, etzipcode;
     private Button btn_register;
     private CheckBox checkBox;
     private Dialog dialog;
@@ -44,7 +44,8 @@ public class RegisterActivity extends AppCompatActivity {
         mToolbar.setNavigationOnClickListener(view -> onBackPressed());
         getSupportActionBar().setElevation(0);
 
-        etfullname = findViewById(R.id.EditTextFullName);
+        firstNameEditText = findViewById(R.id.firstNameEditText);
+        lastNameEditText = findViewById(R.id.lastNameEditText);
         etphonenum = findViewById(R.id.EditTextPhoneNumber);
         etemail = findViewById(R.id.EditTextRegisterEmail);
         etpassword = findViewById(R.id.EditTextPassword);
@@ -58,7 +59,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         btn_register.setOnClickListener(v -> {
 
-            if (TextUtils.isEmpty(etfullname.getText()) || TextUtils.isEmpty(etphonenum.getText()) ||TextUtils.isEmpty(etemail.getText()) || TextUtils.isEmpty(etpassword.getText())
+            if (TextUtils.isEmpty(firstNameEditText.getText()) || TextUtils.isEmpty(lastNameEditText.getText()) || TextUtils.isEmpty(etphonenum.getText()) ||TextUtils.isEmpty(etemail.getText()) || TextUtils.isEmpty(etpassword.getText())
             || TextUtils.isEmpty(etconfirmpassword.getText()) || TextUtils.isEmpty(etaddress.getText()) || TextUtils.isEmpty(etzipcode.getText())) {
                 Toast.makeText(RegisterActivity.this, "You must fill in all of the fields", Toast.LENGTH_SHORT).show();
             } else if (etphonenum.getText().length() != 11) {
@@ -69,13 +70,14 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(RegisterActivity.this, "Password must at least 8 characters", Toast.LENGTH_SHORT).show();
             }else {
                 Intent intent = new Intent(RegisterActivity.this, PhoneAuthActivity.class);
-                intent.putExtra("fullname", etfullname.getText().toString());
-                intent.putExtra("phonenum", etphonenum.getText().toString());
-                intent.putExtra("email", etemail.getText().toString());
-                intent.putExtra("password", etpassword.getText().toString());
-                intent.putExtra("address", etaddress.getText().toString());
-                intent.putExtra("zipcode", etzipcode.getText().toString());
+                intent.putExtra("fullname", firstNameEditText.getText().toString().trim() + " " + lastNameEditText.getText().toString().trim());
+                intent.putExtra("phonenum", etphonenum.getText().toString().trim());
+                intent.putExtra("email", etemail.getText().toString().trim());
+                intent.putExtra("password", etpassword.getText().toString().trim());
+                intent.putExtra("address", etaddress.getText().toString().trim());
+                intent.putExtra("zipcode", etzipcode.getText().toString().trim());
                 startActivity(intent);
+                finish();
             }
         });
 

@@ -75,7 +75,7 @@
         </style>
 
         <style name="MyBottomNavigationView.TextAppearance" parent="TextAppearance.MaterialComponents.Caption">
-        <item name="android:textSize">9.5sp</item>
+        <item name="android:textSize">9.8sp</item>
         </style>
 
 
@@ -100,6 +100,12 @@
     <style name="ld_m">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">5dp</item>
+        <item name="android:background">@color/light</item>
+    </style>
+
+    <style name="ld_s">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">2dp</item>
         <item name="android:background">@color/light</item>
     </style>
 

@@ -11,12 +11,13 @@ import com.example.capstoneprojectv13.fragment.FragmentOrderCancelled;
 import com.example.capstoneprojectv13.fragment.FragmentOrderCompleted;
 import com.example.capstoneprojectv13.fragment.FragmentOrderPending;
 import com.example.capstoneprojectv13.fragment.FragmentOrderReceiving;
+import com.example.capstoneprojectv13.fragment.FragmentOrderReturnRefund;
 import com.example.capstoneprojectv13.fragment.FragmentOrderShipping;
 import com.example.capstoneprojectv13.fragment.FragmentPayment;
 
 public class ViewPagerFragmentAdapter extends FragmentStateAdapter {
 
-    private String[] titles = new String[]{"Pending","To Pay","To Ship","To Receive","Completed","Cancelled"};
+    private String[] titles = new String[]{"Pending","To Pay","To Ship","To Receive","Completed","Cancelled","Return/Refund"};
 
     public ViewPagerFragmentAdapter(@NonNull Fragment fragment) {
         super(fragment);
@@ -38,6 +39,8 @@ public class ViewPagerFragmentAdapter extends FragmentStateAdapter {
                 return new FragmentOrderCompleted();
             case 5:
                 return new FragmentOrderCancelled();
+            case 6:
+                return new FragmentOrderReturnRefund();
         }
         return new FragmentOrderPending();
     }

@@ -15,25 +15,6 @@
 
 
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="Reason for cancellation "
-        android:textColor="@android:color/black"
-        android:textSize="16sp" />
-
-    <ImageView
-        android:id="@+id/cancelIv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:padding="10dp"
-        android:src="@drawable/ic_x_mark_one"
-        android:layout_alignParentEnd="true"
-        />
 
     </RelativeLayout>
 
@@ -43,13 +24,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:id="@+id/radioGroup" >
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:text="  Taking too long to confirm the order"
+            android:text="Did not receive the order"
             android:textSize="14sp"
             tools:ignore="OnClick" />
 
@@ -57,8 +38,7 @@
             android:layout_marginTop="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:text="  Need to change the delivery address"
+            android:text="Received an incomplete product(s) (missing quantity or accessories)"
             android:textSize="14sp"
             tools:ignore="OnClick"/>
 
@@ -67,8 +47,7 @@
             android:layout_marginTop="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:text="  Change of mind"
+            android:text="Received the wrong product(s)(e.g. wrong size, different product)"
             android:textSize="14sp"
             tools:ignore="OnClick"/>
 
@@ -77,8 +56,15 @@
             android:layout_marginTop="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:text="  Others"
+            android:text="Received a product with physical damage(e.g. dented, scratched)"
+            android:textSize="14sp"
+            tools:ignore="OnClick"/>
+
+        <RadioButton
+            android:layout_marginTop="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Received a faulty product(e.g. malfunction)"
             android:textSize="14sp"
             tools:ignore="OnClick"/>
 
@@ -103,7 +89,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginBottom="5dp"
         android:background="@drawable/custom_button_sharp"
-        android:text="Submit"
+        android:text="Choose"
         android:textColor="@color/white"
         app:backgroundTint="@color/reddish"   />
 </LinearLayout>

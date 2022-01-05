@@ -7,11 +7,21 @@ public class CartModel {
     private String itemprice;
     private int quantity;
     private float totalPrice;
-
     private String cartId;
+    private String status;
+
+
 
     public CartModel(){
 
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getCartId() {

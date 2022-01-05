@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.PagerAdapter;
 
 import com.bumptech.glide.Glide;
 import com.example.capstoneprojectv13.R;
@@ -20,12 +19,6 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public class CartAdapter extends FirebaseRecyclerAdapter<CartModel,CartAdapter.myViewHolder> {
 
@@ -38,7 +31,7 @@ public class CartAdapter extends FirebaseRecyclerAdapter<CartModel,CartAdapter.m
      */
 
     Context context;
-    double a = 0;
+    int a = 0;
     public CartAdapter(Context context ,@NonNull FirebaseRecyclerOptions<CartModel> options)
     {
         super(options);
@@ -47,6 +40,12 @@ public class CartAdapter extends FirebaseRecyclerAdapter<CartModel,CartAdapter.m
 
     @Override
     protected void onBindViewHolder(@NonNull CartAdapter.myViewHolder holder, int position, @NonNull CartModel model) {
+        if(model.getKey().equals("ongoing")){
+            holder.HomelLayout.setEnabled(true);
+        }else{
+            holder.HomelLayout.setEnabled(false);
+        }
+        holder.cartStatus.setText(model.getStatus());
         holder.CartNameTv.setText(model.getName());
         holder.CartPriceTv.setText(String.valueOf(model.getTotalPrice()));
         holder.CartQuantityTv.setText("x" + (model.getQuantity()));
@@ -57,10 +56,7 @@ public class CartAdapter extends FirebaseRecyclerAdapter<CartModel,CartAdapter.m
         holder.HomelLayout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                FirebaseUser user = mAuth.getCurrentUser();
-                getRef(position).removeValue();
-                notifyItemRemoved(position);
+                Toast.makeText(context, model.getStatus(), Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -77,7 +73,7 @@ public class CartAdapter extends FirebaseRecyclerAdapter<CartModel,CartAdapter.m
 
         ImageView CartImageIv;
         LinearLayout HomelLayout;
-        TextView CartQuantityTv, CartPriceTv, CartNameTv;
+        TextView CartQuantityTv, CartPriceTv, CartNameTv, cartStatus;
 
         public myViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -86,8 +82,10 @@ public class CartAdapter extends FirebaseRecyclerAdapter<CartModel,CartAdapter.m
             CartPriceTv = itemView.findViewById(R.id.CartPriceTv);
             CartQuantityTv = itemView.findViewById(R.id.CartQuantityTv);
             HomelLayout = itemView.findViewById(R.id.HomelLayout);
+            cartStatus = itemView.findViewById(R.id.cartStatus);
         }
     }
+
 
     @Override
     public void startListening() {

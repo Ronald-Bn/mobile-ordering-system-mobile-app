@@ -183,6 +183,7 @@ public class PendingActivity extends AppCompatActivity {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.setCancelable(false); //Optional
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation; //Setting the animations to dialog
+        dialog.show();
 
         Button submitBtn = dialog.findViewById(R.id.submitBtn);
         RadioGroup radioGroup = dialog.findViewById(R.id.radioGroup);
@@ -205,7 +206,8 @@ public class PendingActivity extends AppCompatActivity {
                             updateData.put("remarks", radioButton.getText().toString().trim());
                             updateData.put("rejectdate", dateAndTime());
                             updateData.put("status", "rejected");
-                            updateData.put("status_userid" , "reject_" + user.getUid());
+                            updateData.put("rejected",reportDateAndTime());
+                            updateData.put("status_userid" , "rejected_" + user.getUid());
 
                             databaseReference.updateChildren(updateData).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -217,6 +219,7 @@ public class PendingActivity extends AppCompatActivity {
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
+                                    dialog.dismiss();
                                     Toast.makeText(PendingActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
@@ -248,6 +251,14 @@ public class PendingActivity extends AppCompatActivity {
         String currentTime = timeFormat.format(dateAndTime);
 
         return new StringBuilder().append(currentDate).append(" ").append(currentTime).toString();
+    }
+
+    private String reportDateAndTime(){
+        // Current Date
+        Date dateAndTime = Calendar.getInstance().getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMddyyyy", Locale.getDefault());
+        String currentDate = dateFormat.format(dateAndTime);
+        return currentDate;
     }
 
 

@@ -9,7 +9,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -17,9 +21,11 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -52,7 +58,6 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -77,8 +82,8 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     private RadioButton cashPaymentBtn, gCashPaymentBtn;
     private LinearLayout linearLayout,linearLayout2 ;
     private EditText referenceNoEt;
-
     private Uri imageUrl = null;
+    private Dialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +112,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         confirmDate =findViewById(R.id.confirmDate);
         referenceNoEt =findViewById(R.id.referenceNoEt);
         btnPlaceOrder.setOnClickListener(this);
+        dialog = new Dialog(this);
 
         String cartId = getIntent().getStringExtra("cartId");
         ordersId = getIntent().getStringExtra("ordersId");
@@ -123,6 +129,10 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+
+
 
 
         FirebaseRecyclerOptions<CartModel> options =
@@ -264,17 +274,29 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         if(view == btnPlaceOrder){
             if(cashPaymentBtn.isChecked()){
+                dialog.setContentView(R.layout.loading_dialog);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.setCancelable(false);
+                dialog.show();
                 cashPayment();
             }else if(gCashPaymentBtn.isChecked()){
+                dialog.setContentView(R.layout.loading_dialog);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.setCancelable(false);
+                dialog.show();
                 gCashPayment();
             }else{
+                dialog.setContentView(R.layout.loading_dialog);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.setCancelable(false);
+                dialog.show();
                 Toast.makeText(this, "Choose payment method", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
             }
         }
     }
 
     private void cashPayment(){
-
         FirebaseUser user = mAuth.getInstance().getCurrentUser();
         DatabaseReference rootRef = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
                 .child("Orders").child(ordersId);
@@ -297,6 +319,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
+                                    dialog.dismiss();
                                     Toast.makeText(PaymentActivity.this, "Payment Success", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(PaymentActivity.this,MainActivity.class);
                                     startActivity(intent);
@@ -305,6 +328,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                             }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            dialog.dismiss();
                             Toast.makeText(PaymentActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -313,6 +337,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                dialog.dismiss();
                 Toast.makeText(PaymentActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -330,7 +355,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                             @Override
                             public void onComplete(@NonNull Task<Uri> task) {
                                 if(task.isSuccessful()) {
-
                                     DatabaseReference rootRef = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
                                             .child("Orders").child(ordersId);
 
@@ -348,6 +372,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                                             rootRef.updateChildren(updateData).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void unused) {
+                                                    dialog.dismiss();
                                                     Toast.makeText(PaymentActivity.this, "Payment Success", Toast.LENGTH_SHORT).show();
                                                     Intent intent = new Intent(PaymentActivity.this,MainActivity.class);
                                                     startActivity(intent);
@@ -356,6 +381,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                                             }).addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
+                                                    dialog.dismiss();
                                                     Toast.makeText(PaymentActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             });
@@ -363,6 +389,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError error) {
+                                            dialog.dismiss();
                                             Toast.makeText(PaymentActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     });
@@ -372,6 +399,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 });
            }else if(imageUrl == null && TextUtils.isEmpty(referenceNoEt.getText().toString())){
+                dialog.dismiss();
             Toast.makeText(this, "Enter Reference Number", Toast.LENGTH_SHORT).show();
             }else{
             DatabaseReference rootRef = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
@@ -393,6 +421,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
+                                        dialog.dismiss();
                                         Toast.makeText(PaymentActivity.this, "Payment Success", Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(PaymentActivity.this,MainActivity.class);
                                         startActivity(intent);
@@ -401,6 +430,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                                 }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
+                                dialog.dismiss();
                                 Toast.makeText(PaymentActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -408,6 +438,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
+                    dialog.dismiss();
                     Toast.makeText(PaymentActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });

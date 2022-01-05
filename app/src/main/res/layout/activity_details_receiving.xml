@@ -476,7 +476,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/btnPlaceOrder"
+            android:id="@+id/receiveBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@drawable/custom_button_sharp"

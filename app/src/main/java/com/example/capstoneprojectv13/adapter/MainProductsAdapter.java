@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,6 +39,15 @@ public class MainProductsAdapter extends FirebaseRecyclerAdapter<Products,MainPr
 
     @Override
     protected void onBindViewHolder(@NonNull myViewHolder holder, int position, @NonNull Products model) {
+        int a = 1 * model.getOne_star();
+        int b = 2 * model.getTwo_star();
+        int c = 3 * model.getThree_star();
+        int d = 4 * model.getFour_star();
+        int e = 5 * model.getFive_star();
+        int sum = model.getOne_star() + model.getTwo_star() + model.getThree_star() + model.getFour_star() + model.getFive_star();
+        int total = e + d + c + b + a ;
+        int average = total / sum;
+        holder.ratingbar.setRating(average);
         holder.Name.setText(model.getName());
         holder.Price.setText(model.getPrice());
         holder.Category.setText(model.getCategory());
@@ -67,6 +77,7 @@ public class MainProductsAdapter extends FirebaseRecyclerAdapter<Products,MainPr
                 intent.putExtra("description", description);
                 intent.putExtra("status", status);
                 intent.putExtra("image", image);
+                intent.putExtra("rating", average);
                 context.startActivity(intent);
             }
         });
@@ -86,6 +97,7 @@ public class MainProductsAdapter extends FirebaseRecyclerAdapter<Products,MainPr
         TextView Id,Name,Price,Category,Description,Status;
         ImageView Image;
 
+        RatingBar ratingbar;
         LinearLayout linearLayout;
 
 
@@ -99,10 +111,9 @@ public class MainProductsAdapter extends FirebaseRecyclerAdapter<Products,MainPr
             Description = itemView.findViewById(R.id.HomeDescriptionTv);
             Status = itemView.findViewById(R.id.HomeDescriptionTv);
             Image = itemView.findViewById(R.id.HomeImageIv);
+            ratingbar = itemView.findViewById(R.id.ratingbar);
             linearLayout = itemView.findViewById(R.id.HomelLayout);
 
         }
     }
-
-
 }

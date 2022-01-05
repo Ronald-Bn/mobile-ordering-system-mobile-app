@@ -2,11 +2,13 @@ package com.example.capstoneprojectv13.model;
 
 public class OrdersModel {
 
+
+
     public OrdersModel(){
 
     }
 
-    public OrdersModel(String uid, String key,String name, int price, String products, String address, String zipcode, String date, String status) {
+    public OrdersModel(String uid, String key,String name, int price, String products, String address, String zipcode, String date, String status, String notify) {
         this.uid = key;
         this.key = key;
         this.name = name;
@@ -29,6 +31,15 @@ public class OrdersModel {
     private String status;
     private String cartId;
 
+    private String notify;
+
+    public String getNotify() {
+        return notify;
+    }
+
+    public void setNotify(String notify) {
+        this.notify = notify;
+    }
 
     public String getCartId() {
         return cartId;

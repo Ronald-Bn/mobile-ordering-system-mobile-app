@@ -30,10 +30,13 @@ import com.bumptech.glide.Glide;
 import com.example.capstoneprojectv13.adapter.ReviewsAdapter;
 import com.example.capstoneprojectv13.listener.ICartLoadListener;
 import com.example.capstoneprojectv13.model.CartModel;
+import com.example.capstoneprojectv13.model.Products;
 import com.example.capstoneprojectv13.model.Reviews;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -92,6 +95,14 @@ public class ProductsActivity extends AppCompatActivity {
         etQuantity.setFocusableInTouchMode(false);
         etQuantity.setFocusable(false);
 
+        pid = getIntent().getStringExtra("id");
+        name = getIntent().getStringExtra("name");
+        price = getIntent().getStringExtra("price");
+        image = getIntent().getStringExtra("image");
+        String category = getIntent().getStringExtra("category");
+        String description = getIntent().getStringExtra("description");
+        String status = getIntent().getStringExtra("status");
+
         dialog = new Dialog(this);
 
         RatingBar ratingBar = findViewById(R.id.ratingBar);
@@ -100,29 +111,10 @@ public class ProductsActivity extends AppCompatActivity {
         stars.getDrawable(0).setColorFilter(Color.rgb(254, 186, 31), PorterDuff.Mode.SRC_ATOP);
         stars.getDrawable(1).setColorFilter(Color.rgb(254, 186, 31), PorterDuff.Mode.SRC_ATOP);
 
-        //Get string from adapter;
-         pid = getIntent().getStringExtra("id");
-        name = getIntent().getStringExtra("name");
-        price = getIntent().getStringExtra("price");
-        image = getIntent().getStringExtra("image");
-        String category = getIntent().getStringExtra("category");
-        String description = getIntent().getStringExtra("description");
-        String status = getIntent().getStringExtra("status");
-
 
         mAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
-
-
-        DocumentReference documentReference = fStore.collection("Users").document(user.getUid());
-        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable @org.jetbrains.annotations.Nullable DocumentSnapshot value, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
-                username = value.getString("FullName");
-            }
-        });
-
 
 
         nameTv.setText(name);
@@ -132,6 +124,55 @@ public class ProductsActivity extends AppCompatActivity {
                 .load(image)
                 .into(Image);
 
+        /*databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference()
+                .child("Products")
+                .child(pid);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren())
+                {
+                    Map<String,String> map = (Map<String, String>) ds.getValue();
+                    Object name = map.get("name");
+                    Object price = map.get("price");
+                    Object image = map.get("image");
+                    Object description = map.get("description");
+
+                    nameTv.setText(String.valueOf(name));
+                    priceTv.setText(String.valueOf(price));;
+                    descriptionTv.setText(String.valueOf(description));
+                    Glide.with(ProductsActivity.this)
+                            .load(String.valueOf(image))
+                            .into(Image);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });*/
+
+
+
+
+
+
+        DocumentReference documentReference = fStore.collection("Users").document(user.getUid());
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if (documentSnapshot.exists()) {
+                        username = documentSnapshot.getString("FullName");
+                    }
+                }
+            }
+        });
+
+
         //Recyclerview
         recyclerView = findViewById(R.id.ReviewRecyclerList);
         recyclerView.setHasFixedSize(true);
@@ -140,7 +181,9 @@ public class ProductsActivity extends AppCompatActivity {
 
         FirebaseRecyclerOptions<Reviews> options =
                 new FirebaseRecyclerOptions.Builder<Reviews>()
-                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference().child("Reviews"), Reviews.class)
+                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                .getReference()
+                                .child("Reviews"), Reviews.class)
                         .build();
 
         reviewAdapter = new ReviewsAdapter(options);
@@ -246,6 +289,7 @@ public class ProductsActivity extends AppCompatActivity {
                     cartModel.setName(name);
                     cartModel.setImage(image);
                     cartModel.setKey("ongoing");
+                    cartModel.setStatus(pid);
                     cartModel.setItemprice(price);
                     cartModel.setQuantity(number);
                     cartModel.setTotalPrice(number * Float.parseFloat(price));
@@ -273,10 +317,10 @@ public class ProductsActivity extends AppCompatActivity {
 
     }
 
+
     private void getRatings(){
         dialog.setContentView(R.layout.reviews);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
 
         EditText etReviews = dialog.findViewById(R.id.etReviews);
         etReviews.setGravity(Gravity.TOP);

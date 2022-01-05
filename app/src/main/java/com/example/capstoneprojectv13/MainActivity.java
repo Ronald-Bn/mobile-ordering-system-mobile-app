@@ -25,7 +25,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
-    MainProductsAdapter mainProductsAdapter;
     private BottomNavigationView btnViewid;
 
 
@@ -86,15 +85,6 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private void txtSearch(String str) {
-        FirebaseRecyclerOptions<Products> options =
-                new FirebaseRecyclerOptions.Builder<Products>()
-                        .setQuery(FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference().child("Products").orderByChild("name").startAt(str).endAt(str + "~"), Products.class)
-                        .build();
-
-        mainProductsAdapter = new MainProductsAdapter(this, options);
-        mainProductsAdapter.startListening();
-    }
 
     @Override
     protected void onStop() {
