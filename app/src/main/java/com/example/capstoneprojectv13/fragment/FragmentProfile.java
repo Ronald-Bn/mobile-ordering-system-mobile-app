@@ -142,7 +142,7 @@ public class FragmentProfile extends Fragment {
                     return;
                 }
                 if(newPassword.length() < 8){
-                    Toast.makeText(getContext(), "Password must atleast 8 characters", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Password must at least 8 characters", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(! cnewPassword.equals(newPassword)){

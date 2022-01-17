@@ -173,7 +173,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    >
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -229,6 +230,38 @@
                         </LinearLayout>
                     </LinearLayout>
                 </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/gCashReceiptPaymentRL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_centerVertical="true"
+                        android:text="GCASH"
+                        android:textSize="14sp" />
+
+
+                    <TextView
+                        android:id="@+id/receiptBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:background="@drawable/custom_button_red"
+                        android:paddingStart="15dp"
+                        android:paddingTop="5dp"
+                        android:paddingEnd="15dp"
+                        android:paddingBottom="5dp"
+                        android:text="View"
+                        android:textColor="@color/white"/>
+                </RelativeLayout>
+
             </LinearLayout>
 
             <View style="@style/ld_m" />

@@ -2,6 +2,7 @@ package com.example.capstoneprojectv13.fragment;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.capstoneprojectv13.CheckOutActivity;
@@ -130,6 +133,10 @@ public class FragmentCart extends Fragment {
                                         .child(user.getUid())
                                         .child(key);
                                 databaseReference.removeValue();
+
+                               if(pos == 0){
+                                   CartTotalTv.setText(String.valueOf(pos));
+                               }
                             }
                         }
                 ));
@@ -142,10 +149,13 @@ public class FragmentCart extends Fragment {
                             @Override
                             public void onClick(int pos) {
                                 String key = ((TextView) recyclerView.findViewHolderForAdapterPosition(pos).itemView.findViewById(R.id.cartStatus)).getText().toString();
-                                String quantity = ((TextView) recyclerView.findViewHolderForAdapterPosition(pos).itemView.findViewById(R.id.cartStatus)).getText().toString();
+                                String name = ((TextView) recyclerView.findViewHolderForAdapterPosition(pos).itemView.findViewById(R.id.CartNameTv)).getText().toString();
+                                String quantity = ((TextView) recyclerView.findViewHolderForAdapterPosition(pos).itemView.findViewById(R.id.CartQuantityTv)).getText().toString();
                                 Intent intent = new Intent(getActivity().getApplication(), ProductsActivity.class);
                                 intent.putExtra("id" , key);
+                                intent.putExtra("name", name);
                                 intent.putExtra("quantity", quantity);
+                                intent.putExtra("fragmentCart", true);
                                 startActivity(intent);
                             }
                         }

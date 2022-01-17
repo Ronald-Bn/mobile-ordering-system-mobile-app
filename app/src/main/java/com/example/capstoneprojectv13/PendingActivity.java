@@ -100,6 +100,10 @@ public class PendingActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference("Orders")
+                .child(ordersId);;
+
 
         FirebaseRecyclerOptions<CartModel> options =
                 new FirebaseRecyclerOptions.Builder<CartModel>()
@@ -126,6 +130,7 @@ public class PendingActivity extends AppCompatActivity {
                 }
             }
         });
+
 
         databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
                 .getReference("Orders");
@@ -201,6 +206,7 @@ public class PendingActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if(snapshot.exists()){
+                            snapshot.child("pending").getRef().removeValue();
                             Map<String, Object> updateData = new HashMap<>();
                             updateData.put("cancelledby", "User");
                             updateData.put("remarks", radioButton.getText().toString().trim());
@@ -208,6 +214,7 @@ public class PendingActivity extends AppCompatActivity {
                             updateData.put("status", "rejected");
                             updateData.put("rejected",reportDateAndTime());
                             updateData.put("status_userid" , "rejected_" + user.getUid());
+
 
                             databaseReference.updateChildren(updateData).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override

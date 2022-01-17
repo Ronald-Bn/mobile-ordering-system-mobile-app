@@ -234,20 +234,21 @@ public class RequestReturnActivity extends AppCompatActivity {
                           image = String.valueOf(uri);
                           DatabaseReference databaseReference = FirebaseDatabase.getInstance().getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
                                     .getReference()
-                                    .child("Refund")
+                                    .child("Orders")
                                     .child(ordersId);
 
-                            postData.put("image", image);
+                            postData.put("request_image", image);
                             postData.put("reason" , reasonTv.getText().toString().trim());
                             postData.put("comment" , usersComment.getText().toString().trim());
                             postData.put("email_address" ,emailAddress.getText().toString());
-                            postData.put("status_userid" , "return_" + usersId);
                             postData.put("status" , "return");
                             databaseReference.updateChildren(postData).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
                                     dialog.dismiss();
                                     Toast.makeText(RequestReturnActivity.this, "Request Return & Refund Success", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RequestReturnActivity.this, "Please wait for the Response", Toast.LENGTH_SHORT).show();
+                                    onBackPressed();
                                 }
                             });
                         }

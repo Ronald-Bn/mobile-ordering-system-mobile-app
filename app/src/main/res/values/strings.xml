@@ -31,9 +31,10 @@
     <string name="enter_phone_number">Enter phone number</string>
     <string name="get_otp">Get OTP</string>
     <string name="didn_t_received_resend">Didn\'t received ? <font color='#da0000'><b>RESEND</b></font></string>
-
+    <string name="default_notification_channel_id">PushNotifications</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
     <string-array name="avail">
         <item>Available</item>
         <item>Not Available</item>
@@ -103,5 +104,5 @@ PLEASE NOTE: We reserve the right, at our sole discretion, to change, modify or 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
-    <string name="msg_token_fmt">qweqw</string>
+    <string name="msg_token_fmt"></string>
 </resources>

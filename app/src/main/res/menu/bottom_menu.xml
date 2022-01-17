@@ -19,6 +19,7 @@
 
     <item android:id="@+id/notification_nav"
         android:title="Notifications"
+        android:visible="false"
         android:icon="@drawable/navigation_notification_selector"
         />
 

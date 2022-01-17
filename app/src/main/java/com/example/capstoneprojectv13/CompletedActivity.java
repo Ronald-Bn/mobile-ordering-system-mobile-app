@@ -1,5 +1,6 @@
 package com.example.capstoneprojectv13;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
@@ -35,7 +36,7 @@ import java.util.Map;
 
 public class CompletedActivity extends AppCompatActivity {
 
-    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, shipDate, receiveDate, gCashPaymentRefNo, TvPhone, TvName;
+    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, shipDate, receiveDate, gCashPaymentRefNo, TvPhone, TvName, receiptBtn;
     private String ordersId;
     private int sum = 0;
     private FirebaseFirestore fStore;
@@ -44,7 +45,7 @@ public class CompletedActivity extends AppCompatActivity {
     private CartAdapter cartAdapter;
     private Parcelable state;
     private FirebaseAuth mAuth;
-    private RelativeLayout cashPaymentRL, gCashPaymentRL;
+    private RelativeLayout cashPaymentRL, gCashPaymentRL, gCashReceiptPaymentRL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,8 @@ public class CompletedActivity extends AppCompatActivity {
         cashPaymentRL = findViewById(R.id.cashPaymentRL);
         gCashPaymentRL = findViewById(R.id.gCashPaymentRL);
         gCashPaymentRefNo = findViewById(R.id.gCashPaymentRefNo);
+        gCashReceiptPaymentRL = findViewById(R.id.gCashReceiptPaymentRL);
+        receiptBtn = findViewById(R.id.receiptBtn);
 
 
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
@@ -153,10 +156,21 @@ public class CompletedActivity extends AppCompatActivity {
                     Object receivedate = map.get("receivedate");
                     Object refno = map.get("refno");
                     Object payment = map.get("payment");
+                    Object receipt = map.get("receipt");
 
-                    if(String.valueOf(payment).equals("Gcash")){
+                    if(String.valueOf(payment).equals("Gcash") &&  !String.valueOf(refno).equals("0")){
                         gCashPaymentRL.setVisibility(View.VISIBLE);
                         gCashPaymentRefNo.setText(String.valueOf(refno));
+                    }else if(String.valueOf(receipt) != null){
+                        gCashReceiptPaymentRL.setVisibility(View.VISIBLE);
+                        receiptBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(CompletedActivity.this , FullScreenImageActivity.class);
+                                intent.putExtra("receipt", String.valueOf(receipt));
+                                startActivity(intent);
+                            }
+                        });
                     }else{
                         cashPaymentRL.setVisibility(View.VISIBLE);
                     }

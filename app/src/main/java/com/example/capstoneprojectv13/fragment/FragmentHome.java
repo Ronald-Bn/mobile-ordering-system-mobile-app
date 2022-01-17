@@ -136,6 +136,7 @@ public class FragmentHome extends Fragment {
                         .build();
 
         mainProductsAdapter = new MainProductsAdapter(getActivity(), options);
+        recyclerView.setAdapter(mainProductsAdapter);
         mainProductsAdapter.startListening();
     }
 

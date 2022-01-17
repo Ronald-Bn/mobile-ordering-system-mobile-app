@@ -67,12 +67,13 @@ public class ProductsActivity extends AppCompatActivity {
     private int quantity = 1;
     private String uid, username;
 
+    private String fragQuantity;
     private String pid, price , name, image;
     private Parcelable state;
     private RecyclerView recyclerView;
     private ReviewsAdapter reviewAdapter;
     private Button BtnAddToCart;
-
+    private boolean fragmentCart;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +96,7 @@ public class ProductsActivity extends AppCompatActivity {
         etQuantity.setFocusableInTouchMode(false);
         etQuantity.setFocusable(false);
 
+        //From Fragment Home
         pid = getIntent().getStringExtra("id");
         name = getIntent().getStringExtra("name");
         price = getIntent().getStringExtra("price");
@@ -102,6 +104,10 @@ public class ProductsActivity extends AppCompatActivity {
         String category = getIntent().getStringExtra("category");
         String description = getIntent().getStringExtra("description");
         String status = getIntent().getStringExtra("status");
+
+        //From FragmentCart
+        fragmentCart = getIntent().getBooleanExtra("fragmentCart",false);
+        fragQuantity = getIntent().getStringExtra("quantity");
 
         dialog = new Dialog(this);
 
@@ -117,6 +123,12 @@ public class ProductsActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
 
 
+        if(fragmentCart == true){
+            String convertQuantity =  fragQuantity.substring(1);
+            etQuantity.setText(convertQuantity);
+            quantity = Integer.valueOf(convertQuantity);
+        }
+
         nameTv.setText(name);
         priceTv.setText(price);
         descriptionTv.setText(description);
@@ -124,23 +136,25 @@ public class ProductsActivity extends AppCompatActivity {
                 .load(image)
                 .into(Image);
 
-        /*databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
                 .getReference()
-                .child("Products")
-                .child(pid);
-        databaseReference.addValueEventListener(new ValueEventListener() {
+                .child("Products");
+
+        databaseReference.orderByChild("name").equalTo(name).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot ds : snapshot.getChildren())
                 {
-                    Map<String,String> map = (Map<String, String>) ds.getValue();
+
+                    Map<String,Object> map = (Map<String, Object>) ds.getValue();
                     Object name = map.get("name");
                     Object price = map.get("price");
                     Object image = map.get("image");
                     Object description = map.get("description");
 
+
                     nameTv.setText(String.valueOf(name));
-                    priceTv.setText(String.valueOf(price));;
+                    priceTv.setText(String.valueOf(price));
                     descriptionTv.setText(String.valueOf(description));
                     Glide.with(ProductsActivity.this)
                             .load(String.valueOf(image))
@@ -152,7 +166,7 @@ public class ProductsActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });*/
+        });
 
 
 
@@ -226,10 +240,6 @@ public class ProductsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
-            case R.id.cart_menu:
-
-                return true;
-
             case R.id.star_menu:
                  getRatings();
                 return true;
@@ -238,17 +248,6 @@ public class ProductsActivity extends AppCompatActivity {
         }
     }
 
-    public void increment (View view) {
-        quantity++;
-        etQuantity.setText("" + quantity);
-    }
-
-    public void decrement (View view) {
-        if (quantity > 1){
-            quantity--;
-            etQuantity.setText("" + quantity);
-        }
-    }
 
     private void addToCart(){
         FirebaseUser user = mAuth.getInstance().getCurrentUser();
@@ -261,7 +260,29 @@ public class ProductsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                if(snapshot.exists() && snapshot.hasChild("cartId")) // If the product exists in database
+                if(snapshot.exists() && fragmentCart == true){
+                    CartModel cartModel = snapshot.getValue(CartModel.class);
+                    cartModel.setQuantity(cartModel.getQuantity()+number);
+                    Map<String,Object> updateData = new HashMap<>();
+                    updateData.put("quantity", number);
+                    updateData.put("totalPrice", quantity*Float.parseFloat(priceTv.getText().toString().trim()));
+
+                    databaseReference.child(pid)
+                            .updateChildren(updateData)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    onBackPressed();
+                                    Toast.makeText(ProductsActivity.this, "Updated Cart", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(ProductsActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else if(snapshot.exists()) // If the product exists in database
                 {
                     CartModel cartModel = snapshot.getValue(CartModel.class);
                     cartModel.setQuantity(cartModel.getQuantity()+number);
@@ -348,5 +369,17 @@ public class ProductsActivity extends AppCompatActivity {
                 }
             }
         );
+    }
+
+    public void increment (View view) {
+        quantity++;
+        etQuantity.setText("" + quantity);
+    }
+
+    public void decrement (View view) {
+        if (quantity > 1){
+            quantity--;
+            etQuantity.setText("" + quantity);
+        }
     }
 }

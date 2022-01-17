@@ -47,7 +47,7 @@ import java.util.Map;
 public class
 ReceivingActivity extends AppCompatActivity {
 
-    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, shipDate, gCashPaymentRefNo, amountTv;
+    private TextView TvAddress, TvZipCode, TvSubtotal, TvTotalPayment , TvShip, OrderDateTv, OrderIdTv, confirmDate, paymentDate, shipDate, gCashPaymentRefNo, amountTv, receiptBtn;
     private Button receiveBtn, returnRefundBtn;
     private String ordersId;
     private int sum = 0;
@@ -57,7 +57,7 @@ ReceivingActivity extends AppCompatActivity {
     private CartAdapter cartAdapter;
     private Parcelable state;
     private FirebaseAuth mAuth;
-    private RelativeLayout cashPaymentRL, gCashPaymentRL;
+    private RelativeLayout cashPaymentRL, gCashPaymentRL, gCashReceiptPaymentRL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +91,8 @@ ReceivingActivity extends AppCompatActivity {
         cashPaymentRL = findViewById(R.id.cashPaymentRL);
         gCashPaymentRL = findViewById(R.id.gCashPaymentRL);
         gCashPaymentRefNo = findViewById(R.id.gCashPaymentRefNo);
+        gCashReceiptPaymentRL = findViewById(R.id.gCashReceiptPaymentRL);
+        receiptBtn = findViewById(R.id.receiptBtn);
         returnRefundBtn = findViewById(R.id.returnRefundBtn);
         returnRefundBtn.setOnClickListener(v -> {
             Intent intent = new Intent(this, RequestReturnActivity.class);
@@ -185,10 +187,21 @@ ReceivingActivity extends AppCompatActivity {
                     Object shipdate = map.get("shipdate");
                     Object refno = map.get("refno");
                     Object payment = map.get("payment");
+                    Object receipt = map.get("receipt");
 
-                    if(String.valueOf(payment).equals("Gcash")){
+                    if(String.valueOf(payment).equals("Gcash") &&  !String.valueOf(refno).equals("0")){
                         gCashPaymentRL.setVisibility(View.VISIBLE);
                         gCashPaymentRefNo.setText(String.valueOf(refno));
+                    }else if(String.valueOf(receipt) != null){
+                        gCashReceiptPaymentRL.setVisibility(View.VISIBLE);
+                        receiptBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(ReceivingActivity.this , FullScreenImageActivity.class);
+                                intent.putExtra("receipt", String.valueOf(receipt));
+                                startActivity(intent);
+                            }
+                        });
                     }else{
                         cashPaymentRL.setVisibility(View.VISIBLE);
                     }

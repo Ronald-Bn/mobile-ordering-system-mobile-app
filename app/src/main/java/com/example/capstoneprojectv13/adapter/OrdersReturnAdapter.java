@@ -1,6 +1,7 @@
 package com.example.capstoneprojectv13.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.capstoneprojectv13.CompletedActivity;
 import com.example.capstoneprojectv13.R;
 import com.example.capstoneprojectv13.model.OrdersModel;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -35,6 +37,15 @@ public class OrdersReturnAdapter extends FirebaseRecyclerAdapter<OrdersModel, Or
         holder.OrdersDateTv.setText(model.getDate());
         holder.OrdersAddressTv.setText(model.getAddress());
         holder.OrdersZipcodeTv.setText(model.getZipcode());
+        holder.OrdersBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, CompletedActivity.class);
+                intent.putExtra("ordersId", getRef(position).getKey());
+                intent.putExtra("cartId", model.getCartId());
+                context.startActivity(intent);
+            }
+        });
         
     }
 

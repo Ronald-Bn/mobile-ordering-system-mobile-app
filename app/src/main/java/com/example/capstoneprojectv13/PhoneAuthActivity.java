@@ -24,6 +24,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -227,6 +229,7 @@ public class PhoneAuthActivity extends AppCompatActivity {
             // displaying error message with firebase exception.
             Toast.makeText(PhoneAuthActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             generateOTPBtn.setVisibility(View.VISIBLE);
+            verifyOTPBtn.setVisibility(View.VISIBLE);
         }
     };
     // below method is use to verify code from Firebase.
@@ -259,9 +262,11 @@ public class PhoneAuthActivity extends AppCompatActivity {
                             userInfo.put("Address", address);
                             userInfo.put("Zipcode", zipcode);
                             //specify if the user is admin
-                            userInfo.put("isUsers", "1");
+                            userInfo.put("status", "accessible");
                             df.set(userInfo);
 
+                            DatabaseReference databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
+                            databaseReference.child("Users").child(user.getUid()).setValue(userInfo);
                             Intent i = new Intent(PhoneAuthActivity.this, MainActivity.class);
                             startActivity(i);
                             finish();

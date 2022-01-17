@@ -121,7 +121,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         linearLayout2 = findViewById(R.id.PaymentLayout2);
         linearLayout.setVisibility(View.VISIBLE);
         linearLayout2.setVisibility(View.GONE);
-        btnPlaceOrder.setText("Pay");
+        btnPlaceOrder.setText("Submit");
 
         fStore = FirebaseFirestore.getInstance();
         mStorage = FirebaseStorage.getInstance();
@@ -129,11 +129,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
         recyclerView = findViewById(R.id.CheckOutRecyclerList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
-
-
-
 
         FirebaseRecyclerOptions<CartModel> options =
                 new FirebaseRecyclerOptions.Builder<CartModel>()
@@ -443,6 +438,11 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 }
             });
         }
+        DatabaseReference rootRef = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference()
+                .child("Orders").child(ordersId);
+                Map<String,Object> updateData = new HashMap<>();
+                updateData.put("shipping", reportDateAndTime());
+                 rootRef.child("Report").setValue(updateData);
     }
 
     public void onRadioButtonClicked(View view) {
@@ -473,6 +473,13 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         return new StringBuilder().append(currentDate).append(" ").append(currentTime).toString();
     }
 
+    private String reportDateAndTime(){
+        // Current Date
+        Date dateAndTime = Calendar.getInstance().getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMddyyyy", Locale.getDefault());
+        String currentDate = dateFormat.format(dateAndTime);
+        return currentDate;
+    }
     @Override
     public void onStart() {
         super.onStart();
