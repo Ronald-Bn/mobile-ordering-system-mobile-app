@@ -135,30 +135,30 @@ public class NotificationService extends Service {
                             FirebaseUser user = mAuth.getInstance().getCurrentUser();
                             String uid = user.getUid();
 
-                                DatabaseReference databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                                        .getReference()
-                                        .child("Users")
-                                        .child(uid);
+                            DatabaseReference databaseReference = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                    .getReference()
+                                    .child("Users")
+                                    .child(uid);
 
 
-                                        databaseReference.orderByChild("status").equalTo("blocked").addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                if(snapshot.hasChild("status")){
-                                                    FirebaseAuth.getInstance().signOut();
-                                                    Toast.makeText(NotificationService.this.getApplicationContext(), "Blocked by admin", Toast.LENGTH_SHORT).show();
-                                                    Intent intent = new Intent(NotificationService.this.getApplicationContext(), LoginActivity.class);
-                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                    startActivity(intent);
-                                                    alreadyExecuted = true;
-                                                }
-                                            }
+                            databaseReference.orderByChild("status").equalTo("blocked").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if(snapshot.hasChild("status")){
+                                        FirebaseAuth.getInstance().signOut();
+                                        Toast.makeText(NotificationService.this.getApplicationContext(), "Blocked by admin", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(NotificationService.this.getApplicationContext(), LoginActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                        alreadyExecuted = true;
+                                    }
+                                }
 
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError error) {
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
 
-                                            }
-                                        });
+                                }
+                            });
 
                             //Approved
                             DatabaseReference fromPath = FirebaseDatabase.getInstance("https://capstone-project-v-1-3-default-rtdb.asia-southeast1.firebasedatabase.app/")
@@ -290,9 +290,9 @@ public class NotificationService extends Service {
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if(task.isSuccessful()){
 
-                                                if(!alreadyExecuted) {
-                                                    setRejectedNotification();
-                                                    alreadyExecuted = true;
+                                                    if(!alreadyExecuted) {
+                                                        setRejectedNotification();
+                                                        alreadyExecuted = true;
                                                     }
                                                 }
                                             }
